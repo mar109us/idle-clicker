@@ -1,10 +1,10 @@
 const createNewCookie = document.getElementById("create-new-cookie");
 const deleteAllCookies = document.getElementById("delete-all-cookies");
-const el = document.getElementById("test");
+const displayAllCookies = document.getElementById("display-all-cookies");
 let x = document.cookie;
 
 deleteAllCookies.addEventListener("click", clearAllCookies);
-createNewCookie.addEventListener("click", creatNewRandomCookie);
+createNewCookie.addEventListener("click", createNewRandomCookie);
 
 function setCookie(setCookieKey, setCookieValue, setCookieExpire) {
 	const localDate = new Date();
@@ -19,36 +19,35 @@ function setCookie(setCookieKey, setCookieValue, setCookieExpire) {
 function getAllCookieNames() {
 	return document.cookie
 		.split(";")
-		.map((cookie) => cookie.split("=")[0].trim())
-		.filter((name) => name.length > 0);
+		.map((cookie) => cookie.split("=")[0].trim());
 }
 
-// Test it
 function clearAllCookies() {
 	const cookies = getAllCookieNames();
 	cookies.forEach((cookieName) => {
-		// Clear for current path
 		document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-
-		// Clear for current domain
-		document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
-
-		// Clear for parent domain (handles subdomains)
-		const domain = window.location.hostname.split(".").slice(-2).join(".");
-		document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.${domain}`;
 	});
-
 	console.log("Cleared all cookies");
 	viewCookies();
 }
 
+function modifyCookieOutput() {
+	const cookies = document.cookie.split(";");
+	let localString = "";
+	cookies.forEach((cookieName) => {
+		localString += `${cookieName}<br>`;
+	});
+	return localString;
+}
+
 function viewCookies() {
 	console.log("Current cookies:", getAllCookieNames());
-	el.innerHTML = getAllCookieNames();
+	displayAllCookies.innerHTML = modifyCookieOutput();
+	console.log(document.cookie);
 }
 viewCookies();
 
-function creatNewRandomCookie() {
+function createNewRandomCookie() {
 	setCookie(`KEY_${Math.random()}`, `VALUE_${Math.random()}`, 999);
 	viewCookies();
 }
