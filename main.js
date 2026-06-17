@@ -51,7 +51,14 @@ function doInitStats() {
 	// apple default to 7 day deletion
 	// brave default to 6 months deletion
 
-	setCookie(user.character, "", 1);
+	Object.entries(user.character).forEach((element) => {
+		let elementToString = `${element};`;
+
+		setCookie(
+			elementToString.replace(",", "="),
+			"Max-Age=2000000000; Path=/",
+		);
+	});
 
 	viewCookies();
 }
@@ -62,13 +69,3 @@ const user = {
 		stamina: 100,
 	},
 };
-
-function splitObjects() {}
-
-let test = `${Object.entries(user.character)}`
-
-
-console.log(test);
-
-console.log(Object.keys(user.character));
-console.log(Object.values(user.character));
