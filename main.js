@@ -59,7 +59,9 @@ let goMaxCookieSize = "0";
 function doInitStats() {
 	clearAllCookies();
 
-	// max kB = 15 961
+	// max = 15 691
+	// max cookie = 4096
+	// max cookies(safari) = 50
 
 	//max per cookie
 	/* 	setCookie(
@@ -67,7 +69,7 @@ function doInitStats() {
 		goMaxCookieSize.repeat(2048),
 		3650000,
 	); */
-	setCookie(
+	/* 	setCookie(
 		`${goMaxCookieSize.repeat(1000)}`,
 		goMaxCookieSize.repeat(1000),
 		3650000,
@@ -116,7 +118,7 @@ function doInitStats() {
 		`${goMaxCookieSize.repeat(200)}`,
 		goMaxCookieSize.repeat(283),
 		3650000,
-	);
+	); */
 
 	viewCookies();
 }
