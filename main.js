@@ -34,12 +34,13 @@ function modifyCookieOutput() {
 	return localString;
 }
 
-function viewCookies() {
-	console.log("Current cookies:", getAllCookieNames());
-	displayAllCookies.innerHTML = modifyCookieOutput();
-	console.log(document.cookie);
-}
-viewCookies();
+const user = {
+	character: {
+		xp: 100,
+		health: 100,
+		stamina: 100,
+	},
+};
 
 function doInitStats() {
 	clearAllCookies();
@@ -50,6 +51,7 @@ function doInitStats() {
 	// cookie deletion is restricting functionality very much
 	// apple default to 7 day deletion
 	// brave default to 6 months deletion
+	// chrome 700 day deletion
 
 	Object.entries(user.character).forEach((element) => {
 		let elementToString = `${element};`;
@@ -62,10 +64,17 @@ function doInitStats() {
 
 	viewCookies();
 }
-const user = {
-	character: {
-		xp: 100,
-		health: 100,
-		stamina: 100,
-	},
-};
+
+function viewCookies() {
+	console.log("Current cookies:", getAllCookieNames());
+	displayAllCookies.innerHTML = modifyCookieOutput();
+	console.log(document.cookie);
+}
+viewCookies();
+
+user.character.health += 5;
+doInitStats();
+
+
+// i need to check if user has a cookie, if not, make one.
+// i need to read data from cookie to modify
