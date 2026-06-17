@@ -72,9 +72,10 @@ function viewCookies() {
 }
 viewCookies();
 
-user.character.health += 5;
+user.character.health + 5;
 doInitStats();
 
 
 // i need to check if user has a cookie, if not, make one.
 // i need to read data from cookie to modify
+// new object for default stats
