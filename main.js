@@ -88,6 +88,9 @@ function doInitStats() {
 	});
 	document.cookie = characterKeys;
 
+	setUserCreationTime();
+	document.cookie = user.creation;
+
 	console.log("Cookie: Set creation time");
 	setUserCreationTime();
 
