@@ -71,7 +71,7 @@ function showMainContent(selectedContent) {
 	console.log(selectedContent);
 	ui.middle.innerHTML = `<object width="100%" height="100%" type="text/html" data="content/left-menu/${selectedContent}.html"</object>`;
 }
-showMainContent("study");
+showMainContent("bank");
 
 // cookies
 function setCookie(setCookieKey, setCookieValue, setCookieExpire) {

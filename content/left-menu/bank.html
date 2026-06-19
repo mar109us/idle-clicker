@@ -1,1 +1,217 @@
-<p>bank</p>
+<style>
+	* {
+		padding: 0px;
+		/* border: 2px solid black; */
+		margin: 0.3em;
+	}
+
+	.full-width {
+		width: 100%;
+	}
+
+	.center {
+		justify-content: center;
+	}
+
+	.row {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-evenly;
+		flex-wrap: wrap;
+	}
+
+	.collumn {
+		display: flex;
+		flex-direction: column;
+	}
+
+	button {
+		font-size: 1.2em;
+		padding: 0.2em;
+		width: 20%;
+		min-width: fit-content;
+	}
+
+	table {
+		width: 100%;
+		margin: 0px;
+		padding: 0px;
+	}
+
+	tr {
+		background-color: lightgray;
+
+		margin: 0px;
+		padding: 0px;
+	}
+
+	td {
+		margin: 0px;
+		padding: 0px;
+		padding-left: 2em;
+	}
+</style>
+
+<div class="center collumn">
+	<h1 style="text-align: center; text-decoration: underline;">Bank</h1>
+
+	<div class="row center">
+		<button onclick="account()">Account</button>
+		<button onclick="insurance()">Insurance</button>
+		<button onclick="loan()">Loan</button>
+		<button onclick="market()">Market</button>
+
+	</div>
+
+	<div id="output">
+		<div>
+			<br>
+			<br>
+			<br>
+			<br>
+			<br>
+			<h1 class="row center">Welcome user!</h1>
+			<br>
+			<h2 class="row center">We have updated our insurance offerings!</h2>
+			<h2 class="row center">Contact us for a friendly and non-binding talk.</h2>
+			<br>
+			<h2 class="row center">When you need us, whenever and wherever.</h2>
+			<h2 class="row center">We are there for you, always.</h2>
+		</div>
+	</div>
+
+
+</div>
+
+<script>
+
+	const output = document.getElementById("output")
+
+	function account() {
+		output.innerHTML = `<div>
+		<h1 class="row center">Balance $42 817</h1>
+
+		<h2>Transactions</h2>
+		<table>
+			<tr>
+				<td>Amount</td>
+				<td>Type</td>
+				<td>Who</td>
+			</tr>
+			<tr>
+				<td>$457</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$140</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$1900</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$540</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$457</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$140</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$1900</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$540</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			<tr>
+				<td>$457</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$140</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$1900</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$540</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$457</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$140</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$1900</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+			<tr>
+				<td>$540</td>
+				<td>Sell stock</td>
+				<td>Market</td>
+			</tr>
+		</table>
+
+	</div>`
+	}
+
+	function insurance() {
+		output.innerHTML = `
+			<h1 class="row center">Available insurances</h1>
+	<div class="row">
+		<div class="collumn">
+			<button>Health insurance</button>
+			<button>Life insurance</button>
+			<button>Dental insurance</button>
+			<button>Trip insurance</button>
+		</div>
+		<div class="collumn">
+			<button>Homeowner's insurance</button>
+			<button>Rental insurance</button>
+			<button>Valuables insurance</button>
+			<button>Animal insurance</button>
+		</div>
+		<div class="collumn">
+			<button>Car insurance</button>
+			<button>Boat insurance</button>
+		</div>
+	</div>
+		`
+	}
+
+	function loan() {
+		output.innerHTML = "here is some loan info"
+	}
+
+	function market() {
+		output.innerHTML = "here is some market info"
+	}
+
+</script>
