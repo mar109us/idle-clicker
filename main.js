@@ -1,12 +1,34 @@
-const initStats = document.getElementById("init-stats");
+/* const initStats = document.getElementById("init-stats");
 const deleteAllCookies = document.getElementById("delete-all-cookies");
 const checkCookie = document.getElementById("check-cookie");
 
-const displayAllCookies = document.getElementById("display-all-cookies");
+const displayAllCookies = document.getElementById("display-all-cookies"); */
 
-initStats.addEventListener("click", doInitStats);
-deleteAllCookies.addEventListener("click", clearAllCookies);
-checkCookie.addEventListener("click", isCookieEmpty);
+const user = {
+	creation: null,
+	character: {
+		experience: 100,
+		health: 100,
+		stamina: 100,
+	},
+};
+
+const ui = {
+	testing: {
+		button: {
+			initStats: document.getElementById("init-stats"),
+			deleteAllCookies: document.getElementById("delete-all-cookies"),
+			checkCookie: document.getElementById("check-cookie"),
+		},
+		output: {
+			checkCookie: document.getElementById("display-all-cookies"),
+		},
+	},
+};
+
+ui.testing.button.initStats.addEventListener("click", doInitStats);
+ui.testing.button.deleteAllCookies.addEventListener("click", clearAllCookies);
+ui.testing.button.checkCookie.addEventListener("click", isCookieEmpty);
 
 function setCookie(setCookieKey, setCookieValue, setCookieExpire) {
 	document.cookie =
@@ -37,15 +59,6 @@ function modifyCookieOutput() {
 	return localString;
 }
 
-const user = {
-	creation: null,
-	character: {
-		experience: 100,
-		health: 100,
-		stamina: 100,
-	},
-};
-
 function setUserCreationTime() {
 	const newTime = new Date();
 	user.creation = newTime.getTime();
@@ -57,25 +70,6 @@ function isCookieEmpty() {
 		console.log("Cookie: Exist");
 	} else (console.log("Cookie: Not found"), doInitStats());
 }
-
-/* function doInitStats() {
-	clearAllCookies();
-
-	console.log("Cookie: Set initial values");
-	Object.entries(user.character).forEach((element) => {
-		let elementToString = `${element};`;
-
-		setCookie(
-			elementToString.replace(",", "="),
-			"Max-Age=2000000000; Path=/",
-		);
-	});
-
-	console.log("Cookie: Set creation time");
-	setUserCreationTime();
-
-	viewCookies();
-} */
 
 function doInitStats() {
 	clearAllCookies();
@@ -89,7 +83,7 @@ function doInitStats() {
 	document.cookie = characterKeys;
 
 	setUserCreationTime();
-	document.cookie = user.creation;
+	setCookie("creationTime", user.creation);
 
 	console.log("Cookie: Set creation time");
 	setUserCreationTime();
@@ -99,7 +93,7 @@ function doInitStats() {
 
 function viewCookies() {
 	console.log("Cookie:", getAllCookieNames());
-	displayAllCookies.innerHTML = modifyCookieOutput();
+	ui.testing.output.innerHTML = modifyCookieOutput();
 }
 viewCookies();
 
