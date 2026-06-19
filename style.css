@@ -1,6 +1,17 @@
-body {
-	/* 	display: flex;
-	flex-direction: row; */
+* {
+	box-sizing: border-box;
+}
+
+
+
+.main,
+#middle,
+.right {
+	height: 80vh;
+}
+
+button {
+	font-size: 1.2em;
 }
 
 .main {
@@ -28,11 +39,12 @@ body {
 	}
 }
 
-.middle {
+#middle {
 	padding: 2em;
 	padding-top: 1em;
 	border: 2px solid black;
 
+	width: 80%;
 	p {
 		margin: 2em;
 	}

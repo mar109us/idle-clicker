@@ -1,9 +1,3 @@
-/* const initStats = document.getElementById("init-stats");
-const deleteAllCookies = document.getElementById("delete-all-cookies");
-const checkCookie = document.getElementById("check-cookie");
-
-const displayAllCookies = document.getElementById("display-all-cookies"); */
-
 const user = {
 	creation: null,
 	character: {
@@ -24,12 +18,62 @@ const ui = {
 			checkCookie: document.getElementById("display-all-cookies"),
 		},
 	},
+	left: {
+		study: document.getElementById("study"),
+		work: document.getElementById("work"),
+		excercise: document.getElementById("excercise"),
+		travel: document.getElementById("travel"),
+		events: document.getElementById("events"),
+		bank: document.getElementById("bank"),
+		inventory: document.getElementById("inventory"),
+		social: document.getElementById("social"),
+		health: document.getElementById("health"),
+	},
+	middle: document.getElementById("middle"),
+	right: {},
 };
 
+// test buttons
 ui.testing.button.initStats.addEventListener("click", doInitStats);
 ui.testing.button.deleteAllCookies.addEventListener("click", clearAllCookies);
 ui.testing.button.checkCookie.addEventListener("click", isCookieEmpty);
 
+// ui buttons left
+ui.left.study.addEventListener("click", function () {
+	showMainContent("study");
+});
+ui.left.work.addEventListener("click", function () {
+	showMainContent("work");
+});
+ui.left.excercise.addEventListener("click", function () {
+	showMainContent("excercise");
+});
+ui.left.travel.addEventListener("click", function () {
+	showMainContent("travel");
+});
+ui.left.events.addEventListener("click", function () {
+	showMainContent("events");
+});
+ui.left.bank.addEventListener("click", function () {
+	showMainContent("bank");
+});
+ui.left.inventory.addEventListener("click", function () {
+	showMainContent("inventory");
+});
+ui.left.social.addEventListener("click", function () {
+	showMainContent("social");
+});
+ui.left.health.addEventListener("click", function () {
+	showMainContent("health");
+});
+
+function showMainContent(selectedContent) {
+	console.log(selectedContent);
+	ui.middle.innerHTML = `<object width="100%" height="100%" type="text/html" data="content/left-menu/${selectedContent}.html"</object>`;
+}
+showMainContent("study");
+
+// cookies
 function setCookie(setCookieKey, setCookieValue, setCookieExpire) {
 	document.cookie =
 		setCookieKey + "=" + setCookieValue + "; Max-Age=2000000000; Path=/";
