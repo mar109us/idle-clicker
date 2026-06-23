@@ -79,56 +79,9 @@
 			<h2 class="row center">We are there for you, always.</h2>
 		</div> -->
 
-		<h1 class="row center">Apply for a loan</h1>
-		<form onsubmit="asd(this.submitted);">
-			<div class="row">
-				<div class="collumn">
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-car" name="loan">Car loan</input>
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-student" name="loan">Student
-					loan</input>
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-boat" name="loan">Boat loan</input>
-				</div>
-				<div class="collumn">
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-personal" name="loan">Personal
-					loan</input>
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-recreational" name="loan">Recreational
-					loan</input>
-				</div>
-				<div class="collumn">
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-home" name="loan">Home loan</input>
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-land" name="loan">Land loan</input>
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-business" name="loan">Business
-					loan</input>
-				</div>
-			</div>
-			<div class="row center">
-				<button style="width: 80%;" type="submit">Start application</button>
-			</div>
-		</form>
 
-		<div class="row">
-			<div class="collumn">
-				<label for="loan-application-account">Account Number:</label>
-				<input id="loan-application-account" type="number">
 
-				<label for="loan-application-name">Name:</label>
-				<input id="loan-application-name" type="text">
 
-				<label for="loan-application-adress">Address:</label>
-				<input id="loan-application-adress" type="text">
-
-				<label for="loan-application-email">Email:</label>
-				<input id="loan-application-email" type="text">
-			</div>
-
-			<div class="collumn">
-				<label for="loan-application-birth">Date of Birth:</label>
-				<input id="loan-application-birth" type="text">
-
-				<label for="loan-application-employment-status">Employment status:</label>
-				<input id="loan-application-employment-status" type="text">
-			</div>
-		</div>
 
 
 	</div>
@@ -140,14 +93,8 @@
 
 	const output = document.getElementById("output")
 
-	function asd(selectedLoan) {
-		event.preventDefault()
-		console.log(selectedLoan)
 
-		if (selectedLoan) {
-			output.innerHTML += `mew`
-		}
-	}
+
 
 	function account() {
 		output.innerHTML = `<div>
@@ -268,8 +215,109 @@
 		`
 	}
 
-	function loan() {
-		output.innerHTML = "here is some loan info"
+	function loan(message) {
+		output.innerHTML = `
+				<h1 class="row center">Apply for a loan</h1>
+		<form onsubmit="application(this.submitted);">
+			<div class="row">
+				<div class="collumn">
+					<input onclick="this.form.submitted=this.id" type="radio" id="loan-car" name="loan">Car loan</input>
+					<input onclick="this.form.submitted=this.id" type="radio" id="loan-student" name="loan">Student
+					loan</input>
+					<input onclick="this.form.submitted=this.id" type="radio" id="loan-boat" name="loan">Boat loan</input>
+				</div>
+				<div class="collumn">
+					<input onclick="this.form.submitted=this.id" type="radio" id="loan-personal" name="loan">Personal
+					loan</input>
+					<input onclick="this.form.submitted=this.id" type="radio" id="loan-recreational" name="loan">Recreational
+					loan</input>
+				</div>
+				<div class="collumn">
+					<input onclick="this.form.submitted=this.id" type="radio" id="loan-home" name="loan">Home loan</input>
+					<input onclick="this.form.submitted=this.id" type="radio" id="loan-land" name="loan">Land loan</input>
+					<input onclick="this.form.submitted=this.id" type="radio" id="loan-business" name="loan">Business
+					loan</input>
+				</div>
+			</div>
+			<div class="row center">
+				<button style="width: 80%;" type="submit">Start application</button>
+			</div>
+		</form>
+		`
+	}
+
+	function application(selectedLoan) {
+
+		event.preventDefault()
+		console.log(selectedLoan)
+
+		selectedLoanToString = ""
+
+		if (selectedLoan) {
+
+			switch (selectedLoan) {
+				case "loan-car":
+					selectedLoanToString = "car"
+					break
+				case "loan-student":
+					selectedLoanToString = "student"
+					break
+				case "loan-boat":
+					selectedLoanToString = "boat"
+					break
+				case "loan-personal":
+					selectedLoanToString = "personal"
+					break
+				case "loan-recreational":
+					selectedLoanToString = "recreational"
+					break
+				case "loan-home":
+					selectedLoanToString = "home"
+					break
+				case "loan-land":
+					selectedLoanToString = "land"
+					break
+				case "loan-business":
+					selectedLoanToString = "business"
+					break
+				default:
+					console.log("switch at default -> bank.html -> application()")
+			}
+
+			console.log(selectedLoanToString)
+
+			output.innerHTML = `
+			<h2 class="row center"><u>Application for ${selectedLoanToString} loan</u></h2>
+				<div class="row">
+			<div class="collumn">
+				<label for="loan-application-account">Account Number:</label>
+				<input id="loan-application-account" type="number">
+
+				<label for="loan-application-name">Name:</label>
+				<input id="loan-application-name" type="text">
+
+				<label for="loan-application-adress">Address:</label>
+				<input id="loan-application-adress" type="text">
+
+				<label for="loan-application-email">Email:</label>
+				<input id="loan-application-email" type="text">
+			</div>
+
+			<div class="collumn">
+				<label for="loan-application-birth">Date of Birth:</label>
+				<input id="loan-application-birth" type="text">
+
+				<label for="loan-application-employment-status">Employment status:</label>
+				<input id="loan-application-employment-status" type="text">
+			</div>
+		</div>
+		`
+		}
+		else {
+			output.innerHTML = `<div class="row center"><h1 style="text-align:center;">Please choose a desired loan for your application.</h1>
+			<button onclick="loan()">Ok</button></div>
+			`
+		}
 	}
 
 	function market() {
