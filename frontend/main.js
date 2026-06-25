@@ -161,3 +161,25 @@ function update() {
 // i need to check if user has a cookie, if not, make one.
 // i need to read data from cookie to modify
 // new object for default stats
+
+const isLive = window.location.hostname === "55clicks.com";
+const API_URL = isLive ? "https://55clicks.com" : "http://127.0.0.1:3000";
+
+console.log("Using API URL:", API_URL);
+
+fetch(`${API_URL}/api/test`, {
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({ test: 55 }),
+})
+	.then((response) => response.json())
+	.then((data) => {
+		console.log(data.message);
+		return fetch(`${API_URL}/api/test`);
+	});
+
+fetch(`${API_URL}/api/test`)
+	.then((response) => response.json())
+	.then((data) => {
+		console.log("updated test:", data.test);
+	});
