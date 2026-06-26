@@ -13,6 +13,9 @@ yarn-error.log
 .env.development
 .env.test
 .env.production
+.env.*
+**/.env
+**/.env.*
 
 # ========================
 # OS Generated Files
@@ -42,3 +45,9 @@ Thumbs.db
 dist/
 build/
 coverage/
+
+# ========================
+# Database
+# ========================
+test-db.js
+pgdata/

@@ -4,8 +4,8 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"dev": "nodemon server.js",
-		"start": "node server.js"
+		"dev": "node --env-file=.env --watch-path=server.js --watch-path=db.js server.js",
+		"start": "node --env-file=.env server.js"
 	},
 	"repository": {
 		"type": "git",
@@ -14,13 +14,14 @@
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
-	"type": "commonjs",
+	"type": "module",
 	"bugs": {
 		"url": "https://github.com/mar109us/idle-clicker/issues"
 	},
 	"homepage": "https://github.com/mar109us/idle-clicker#readme",
 	"dependencies": {
-		"express": "^5.2.1"
+		"express": "^5.2.1",
+		"pg": "^8.21.0"
 	},
 	"devDependencies": {
 		"nodemon": "^3.1.14"

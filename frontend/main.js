@@ -13,6 +13,7 @@ const ui = {
 			initStats: document.getElementById("init-stats"),
 			deleteAllCookies: document.getElementById("delete-all-cookies"),
 			checkCookie: document.getElementById("check-cookie"),
+			testDb: document.getElementById("test-db"),
 		},
 		output: {
 			checkCookie: document.getElementById("display-all-cookies"),
@@ -34,9 +35,7 @@ const ui = {
 };
 
 // test buttons
-ui.testing.button.initStats.addEventListener("click", doInitStats);
-ui.testing.button.deleteAllCookies.addEventListener("click", clearAllCookies);
-ui.testing.button.checkCookie.addEventListener("click", isCookieEmpty);
+ui.testing.button.testDb.addEventListener("click", testDatabaseConnection);
 
 // ui buttons left
 ui.left.study.addEventListener("click", function () {
@@ -47,6 +46,7 @@ ui.left.work.addEventListener("click", function () {
 });
 ui.left.excercise.addEventListener("click", function () {
 	showMainContent("excercise");
+	doExercise();
 });
 ui.left.travel.addEventListener("click", function () {
 	showMainContent("travel");
@@ -73,111 +73,86 @@ function showMainContent(selectedContent) {
 }
 showMainContent("bank");
 
-// cookies
-function setCookie(setCookieKey, setCookieValue, setCookieExpire) {
-	document.cookie =
-		setCookieKey + "=" + setCookieValue + "; Max-Age=2000000000; Path=/";
-}
+// Hardcode your test player ID for now so you don't have to keep creating characters
+let currentPlayerId = 1;
 
-function getAllCookieNames() {
-	return document.cookie
-		.split(";")
-		.map((cookie) => cookie.split("=")[0].trim());
-}
+// The source of truth for your UI
+let currentStats = {
+	experience: 0,
+	health: 0,
+	stamina: 0,
+};
 
-function clearAllCookies() {
-	const cookies = getAllCookieNames();
-	cookies.forEach((cookieName) => {
-		document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-	});
-	console.log("Cookie: Cleared");
-	viewCookies();
-}
-
-function modifyCookieOutput() {
-	const cookies = document.cookie.split(";");
-	let localString = "";
-	cookies.forEach((cookieName) => {
-		localString += `${cookieName}<br>`;
-	});
-	return localString;
-}
-
-function setUserCreationTime() {
-	const newTime = new Date();
-	user.creation = newTime.getTime();
-}
-
-function isCookieEmpty() {
-	console.log("Cookie: Check");
-	if (document.cookie) {
-		console.log("Cookie: Exist");
-	} else (console.log("Cookie: Not found"), doInitStats());
-}
-
-function doInitStats() {
-	clearAllCookies();
-
-	console.log("Cookie: Set initial values");
-
-	let characterKeys = "character=";
-	Object.entries(user.character).forEach((entry) => {
-		characterKeys += `[${entry}]`;
-	});
-	document.cookie = characterKeys;
-
-	setUserCreationTime();
-	setCookie("creationTime", user.creation);
-
-	console.log("Cookie: Set creation time");
-	setUserCreationTime();
-
-	viewCookies();
-}
-
-function viewCookies() {
-	console.log("Cookie:", getAllCookieNames());
-	ui.testing.output.innerHTML = modifyCookieOutput();
-}
-viewCookies();
-
-/* user.character.health + 5;
-doInitStats(); */
-
-/* setInterval(update, 1000)
-
-function update() {
-	console.log("mew")
-} */
-
-// max = 15 691
-// max cookie = 4096
-// max cookies(safari) = 50
-// cookie deletion is restricting functionality very much
-// apple default to 7 day deletion
-// brave default to 6 months deletion
-// chrome 700 day deletion
-
-// i need to check if user has a cookie, if not, make one.
-// i need to read data from cookie to modify
-// new object for default stats
+// Boot up the game state on page load
 
 const API_BASE =
 	window.location.hostname === "55clicks.com" ? "" : "http://localhost:3000";
 
 console.log("Using API URL:", API_BASE);
 
-fetch(`${API_BASE}/api/test`, {
-	method: "POST",
-	headers: { "Content-Type": "application/json" },
-	body: JSON.stringify({ test: 55 }),
-})
-	.then((response) => response.json())
-	.then((data) => {
-		console.log("Success:", data.message);
-		return fetch(`${API_BASE}/api/test`);
+// 1. Load data from the database
+async function loadPlayerData() {
+	try {
+		const res = await fetch(`${API_BASE}/api/player/${currentPlayerId}`);
+		const data = await res.json();
+
+		if (res.ok) {
+			currentStats = data;
+			updateUI();
+		}
+	} catch (err) {
+		console.error("Failed to load player", err);
+	}
+}
+
+// 2. Perform the action
+async function doExercise() {
+	try {
+		const res = await fetch(`${API_BASE}/api/action/exercise`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ playerId: currentPlayerId }),
+		});
+
+		const data = await res.json();
+
+		if (res.ok) {
+			console.log(data.message);
+			// Update frontend object with the exact math from the database
+			currentStats.stamina = data.stats.stamina;
+			currentStats.experience = data.stats.experience;
+			updateUI();
+		} else {
+			console.error(data.error); // E.g., "Not enough stamina"
+		}
+	} catch (err) {
+		console.error("Network error", err);
+	}
+}
+
+// 3. Re-render the numbers on the screen
+function updateUI() {
+	console.log("Current Stats:", currentStats);
+	// Example of how you will eventually update your DOM:
+	// document.getElementById("stamina-display").innerText = currentStats.stamina;
+}
+
+function testDatabaseConnection() {
+	fetch(`${API_BASE}/api/test`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ test: 55 }),
 	})
-	.then((response) => response.json())
-	.then((data) => {
-		console.log("Updated test:", data.test);
-	});
+		.then((response) => response.json())
+		.then((data) => {
+			console.log("Success:", data.message);
+			return fetch(`${API_BASE}/api/test`);
+		})
+		.then((response) => response.json())
+		.then((data) => {
+			console.log("Updated test:", data.test);
+		})
+		.catch((error) => console.error("Fetch error:", error));
+}
+
+loadPlayerData();
