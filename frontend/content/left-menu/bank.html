@@ -1,10 +1,4 @@
 <style>
-	* {
-		padding: 0px;
-		/* border: 2px solid black; */
-		margin: 0.3em;
-	}
-
 	.full-width {
 		width: 100%;
 	}
@@ -16,7 +10,6 @@
 	.row {
 		display: flex;
 		flex-direction: row;
-		justify-content: space-evenly;
 		flex-wrap: wrap;
 	}
 
@@ -25,12 +18,12 @@
 		flex-direction: column;
 	}
 
-	button {
+	/* button {
 		font-size: 1.2em;
 		padding: 0.2em;
 		width: 20%;
 		min-width: fit-content;
-	}
+	} */
 
 	table {
 		width: 100%;
@@ -52,276 +45,25 @@
 	}
 </style>
 
-<div class="center collumn">
+
+<div class="collumn">
 	<h1 style="text-align: center; text-decoration: underline;">Bank</h1>
 
-	<div class="row center">
-		<button onclick="account()">Account</button>
-		<button onclick="insurance()">Insurance</button>
-		<button onclick="loan()">Loan</button>
-		<button onclick="market()">Market</button>
-
+	<div class="center">
+		<button class="bank-nav" data-action="account">Account</button>
+		<button class="bank-nav" data-action="insurance">Insurance</button>
+		<button class="bank-nav" data-action="loan">Loan</button>
+		<button class="bank-nav" data-action="market">Market</button>
 	</div>
 
-	<div id="output">
-		<!-- 		<div>
-			<br>
-			<br>
-			<br>
-			<br>
-			<br>
-			<h1 class="row center">Welcome user!</h1>
-			<br>
+	<div id="bank-output">
+		<div>
+			<br><br><br><br><br>
+			<h1 class="row center">Welcome user!</h1><br>
 			<h2 class="row center">We have updated our insurance offerings!</h2>
-			<h2 class="row center">Contact us for a friendly and non-binding talk.</h2>
-			<br>
+			<h2 class="row center">Contact us for a friendly and non-binding talk.</h2><br>
 			<h2 class="row center">When you need us, whenever and wherever.</h2>
 			<h2 class="row center">We are there for you, always.</h2>
-		</div> -->
-
-
-
-
-
-
+		</div>
 	</div>
-
-
 </div>
-
-<script>
-
-	const output = document.getElementById("output")
-
-
-
-
-	function account() {
-		output.innerHTML = `<div>
-		<h1 class="row center">Balance $42 817</h1>
-
-		<h2>Transactions</h2>
-		<table>
-			<tr>
-				<td>Amount</td>
-				<td>Type</td>
-				<td>Who</td>
-			</tr>
-			<tr>
-				<td>$457</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$140</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$1900</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$540</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$457</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$140</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$1900</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$540</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			<tr>
-				<td>$457</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$140</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$1900</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$540</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$457</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$140</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$1900</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-			<tr>
-				<td>$540</td>
-				<td>Sell stock</td>
-				<td>Market</td>
-			</tr>
-		</table>
-
-	</div>`
-	}
-
-	function insurance() {
-		output.innerHTML = `
-			<h1 class="row center">Available insurances</h1>
-	<div class="row">
-		<div class="collumn">
-			<button>Health insurance</button>
-			<button>Life insurance</button>
-			<button>Dental insurance</button>
-			<button>Trip insurance</button>
-		</div>
-		<div class="collumn">
-			<button>Homeowner's insurance</button>
-			<button>Rental insurance</button>
-			<button>Valuables insurance</button>
-			<button>Animal insurance</button>
-		</div>
-		<div class="collumn">
-			<button>Car insurance</button>
-			<button>Boat insurance</button>
-		</div>
-	</div>
-		`
-	}
-
-	function loan(message) {
-		output.innerHTML = `
-				<h1 class="row center">Apply for a loan</h1>
-		<form onsubmit="application(this.submitted);">
-			<div class="row">
-				<div class="collumn">
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-car" name="loan">Car loan</input>
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-student" name="loan">Student
-					loan</input>
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-boat" name="loan">Boat loan</input>
-				</div>
-				<div class="collumn">
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-personal" name="loan">Personal
-					loan</input>
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-recreational" name="loan">Recreational
-					loan</input>
-				</div>
-				<div class="collumn">
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-home" name="loan">Home loan</input>
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-land" name="loan">Land loan</input>
-					<input onclick="this.form.submitted=this.id" type="radio" id="loan-business" name="loan">Business
-					loan</input>
-				</div>
-			</div>
-			<div class="row center">
-				<button style="width: 80%;" type="submit">Start application</button>
-			</div>
-		</form>
-		`
-	}
-
-	function application(selectedLoan) {
-
-		event.preventDefault()
-		console.log(selectedLoan)
-
-		selectedLoanToString = ""
-
-		if (selectedLoan) {
-
-			switch (selectedLoan) {
-				case "loan-car":
-					selectedLoanToString = "car"
-					break
-				case "loan-student":
-					selectedLoanToString = "student"
-					break
-				case "loan-boat":
-					selectedLoanToString = "boat"
-					break
-				case "loan-personal":
-					selectedLoanToString = "personal"
-					break
-				case "loan-recreational":
-					selectedLoanToString = "recreational"
-					break
-				case "loan-home":
-					selectedLoanToString = "home"
-					break
-				case "loan-land":
-					selectedLoanToString = "land"
-					break
-				case "loan-business":
-					selectedLoanToString = "business"
-					break
-				default:
-					console.log("switch at default -> bank.html -> application()")
-			}
-
-			console.log(selectedLoanToString)
-
-			output.innerHTML = `
-			<h2 class="row center"><u>Application for ${selectedLoanToString} loan</u></h2>
-				<div class="row">
-			<div class="collumn">
-				<label for="loan-application-account">Account Number:</label>
-				<input id="loan-application-account" type="number">
-
-				<label for="loan-application-name">Name:</label>
-				<input id="loan-application-name" type="text">
-
-				<label for="loan-application-adress">Address:</label>
-				<input id="loan-application-adress" type="text">
-
-				<label for="loan-application-email">Email:</label>
-				<input id="loan-application-email" type="text">
-			</div>
-
-			<div class="collumn">
-				<label for="loan-application-birth">Date of Birth:</label>
-				<input id="loan-application-birth" type="text">
-
-				<label for="loan-application-employment-status">Employment status:</label>
-				<input id="loan-application-employment-status" type="text">
-			</div>
-		</div>
-		`
-		}
-		else {
-			output.innerHTML = `<div class="row center"><h1 style="text-align:center;">Please choose a desired loan for your application.</h1>
-			<button onclick="loan()">Ok</button></div>
-			`
-		}
-	}
-
-	function market() {
-		output.innerHTML = "here is some market info"
-	}
-
-</script>
