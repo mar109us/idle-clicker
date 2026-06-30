@@ -84,14 +84,10 @@ app.get("/api/player/:id", async (req, res) => {
 	if (result.rows.length === 0)
 		return res.status(404).json({ error: "Not found" });
 
-	// Merge DB data with template
 	const state = { ...initState, ...result.rows[0].data };
-
-	// Send the "clean" object
 	res.json(state);
 });
 
-// POST: The Exercise Action
 app.post("/api/action/exercise", async (req, res) => {
 	const { playerId, actionType } = req.body;
 	const expGain = 5;
@@ -105,24 +101,17 @@ app.post("/api/action/exercise", async (req, res) => {
 			[playerId],
 		);
 
-		// FIX: Merge here so 'state' includes the full template (magic, charisma, etc)
-		// before you perform any math on it.
 		let state = { ...initState, ...result.rows[0].data };
 
-		// 1. HARD VALIDATION
 		if (state.stamina < staminaCost) {
 			return res.status(400).json({ error: "Not enough stamina" });
 		}
 
-		// 2. Perform the math
 		state.stamina -= staminaCost;
 		state.experience += expGain;
 
-		// 3. Safety Clamp
 		if (state.stamina < 0) state.stamina = 0;
 
-		// 4. Update
-		// Now this 'state' object is full and complete
 		await pool.query(
 			"UPDATE player_state SET data = $1 WHERE player_id = $2",
 			[state, playerId],

@@ -3,12 +3,19 @@ import { ui, updateUI, showMainContent } from "./view.js";
 import { doExercise } from "/frontend/actions/left-menu/exercise.js";
 import { bankViews } from "/frontend/actions/left-menu/bank.js";
 
+/**
+ * Fetches data from player database and inserts it into state object
+ * @async
+ * @returns {Promise<void>}
+ */
 async function loadPlayerData() {
 	try {
-		const res = await fetch(`${API_BASE}/api/player/${state.playerId}`);
-		const dbData = await res.json();
+		const playerData = await fetch(
+			`${API_BASE}/api/player/${state.playerId}`,
+		);
+		const dbData = await playerData.json();
 
-		if (res.ok) {
+		if (playerData.ok) {
 			state.stats = { ...updateState, ...dbData };
 
 			updateUI();
@@ -17,9 +24,17 @@ async function loadPlayerData() {
 		console.error("Failed to load player", err);
 	}
 }
-
 loadPlayerData();
+
+// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
+// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
+// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
+
 showMainContent("bank");
+
+// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
+// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
+// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 
 ui.left.study.addEventListener("click", () => showMainContent("study"));
 ui.left.work.addEventListener("click", () => showMainContent("work"));
@@ -31,6 +46,11 @@ ui.left.inventory.addEventListener("click", () => showMainContent("inventory"));
 ui.left.social.addEventListener("click", () => showMainContent("social"));
 ui.left.health.addEventListener("click", () => showMainContent("health"));
 
+/**
+ * Handles buttons in middle section
+ * @async
+ * @returns {Promise<void>}
+ */
 ui.middle.addEventListener("click", async function (event) {
 	if (event.target.classList.contains("button-exercise")) {
 		const actionType = event.target.innerText;
@@ -53,6 +73,10 @@ ui.middle.addEventListener("click", async function (event) {
 	}
 });
 
+/**
+ * Handles submit buttons in middle section
+ * @returns {void}
+ */
 ui.middle.addEventListener("submit", function (event) {
 	if (event.target.id === "loan-form") {
 		event.preventDefault();

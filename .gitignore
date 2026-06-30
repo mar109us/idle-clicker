@@ -16,6 +16,7 @@ yarn-error.log
 .env.*
 **/.env
 **/.env.*
+commands.txt
 
 # ========================
 # OS Generated Files
