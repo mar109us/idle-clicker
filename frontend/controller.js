@@ -2,6 +2,9 @@ import { state, updateState, API_BASE } from "./model.js";
 import { ui, updateUI, showMainContent } from "./view.js";
 import { doExercise } from "/frontend/actions/left-menu/exercise.js";
 import { bankViews } from "/frontend/actions/left-menu/bank.js";
+import { internetViews } from "/frontend/actions/left-menu/internet.js";
+
+const TEST_PLAYER = 1;
 
 /**
  * Fetches data from player database and inserts it into state object
@@ -10,14 +13,11 @@ import { bankViews } from "/frontend/actions/left-menu/bank.js";
  */
 async function loadPlayerData() {
 	try {
-		const playerData = await fetch(
-			`${API_BASE}/api/player/${state.playerId}`,
-		);
-		const dbData = await playerData.json();
+		const playerData = await fetch(`${API_BASE}/api/player/${TEST_PLAYER}`);
+		const dataFromDatabase = await playerData.json();
 
 		if (playerData.ok) {
-			state.stats = { ...updateState, ...dbData };
-
+			updateState(dataFromDatabase);
 			updateUI();
 		}
 	} catch (err) {
@@ -30,7 +30,7 @@ loadPlayerData();
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 
-showMainContent("bank");
+showMainContent("internet");
 
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
@@ -45,6 +45,7 @@ ui.left.bank.addEventListener("click", () => showMainContent("bank"));
 ui.left.inventory.addEventListener("click", () => showMainContent("inventory"));
 ui.left.social.addEventListener("click", () => showMainContent("social"));
 ui.left.health.addEventListener("click", () => showMainContent("health"));
+ui.left.internet.addEventListener("click", () => showMainContent("internet"));
 
 /**
  * Handles buttons in middle section
@@ -55,11 +56,11 @@ ui.middle.addEventListener("click", async function (event) {
 	if (event.target.classList.contains("button-exercise")) {
 		const actionType = event.target.innerText;
 
-		const newStats = await doExercise(API_BASE, state.playerId, actionType);
+		const newStats = await doExercise(API_BASE, TEST_PLAYER, actionType);
 
 		if (newStats) {
-			state.stats.stamina = newStats.stamina;
-			state.stats.experience = newStats.experience;
+			state.character.stamina = newStats.stamina;
+			state.character.experience = newStats.experience;
 			updateUI();
 		}
 	}
@@ -69,6 +70,14 @@ ui.middle.addEventListener("click", async function (event) {
 
 		if (outputDiv && bankViews[action]) {
 			outputDiv.innerHTML = bankViews[action]();
+		}
+	}
+	if (event.target.classList.contains("internet-nav")) {
+		const action = event.target.dataset.action;
+		const outputDiv = document.getElementById("internet-output");
+
+		if (outputDiv && internetViews[action]) {
+			outputDiv.innerHTML = internetViews[action]();
 		}
 	}
 });

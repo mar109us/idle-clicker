@@ -14,11 +14,11 @@ const allowedOrigins = [
 ];
 
 const initState = {
-	stamina: 500,
-	mental: 100,
-	money: 96230053,
+	stamina: 999999,
+	mental: 999999,
+	money: 999999,
 
-	experience: 0,
+	experience: 999999,
 
 	property: {},
 	car: {},
@@ -27,29 +27,79 @@ const initState = {
 	loan: {},
 };
 
+const testPlayer = {
+	id: 1,
+	username: "ionide",
+	createdAt: null,
+	createdAtDate: "",
+};
+
+function createTestPlayer() {
+	const msCreated = new Date().getTime();
+
+	const formattedDate = new Intl.DateTimeFormat("en-GB")
+		.format(msCreated)
+		.replace(/\//g, "-");
+
+	testPlayer.createdAt = msCreated;
+	console.log(testPlayer.createdAt);
+
+	testPlayer.createdAtDate = formattedDate;
+	console.log(testPlayer.createdAtDate);
+}
+
 async function initializeDatabase() {
+	createTestPlayer();
+
+	const client = await pool.connect();
+
 	try {
-		await pool.query(`
+		await client.query("BEGIN");
+
+		await client.query(`
          CREATE TABLE IF NOT EXISTS players (
             player_id SERIAL PRIMARY KEY,
             username VARCHAR(50) UNIQUE NOT NULL,
-            created_at BIGINT NOT NULL
+            created_at BIGINT NOT NULL,
+            created_at_date VARCHAR(50) NOT NULL
          );
 
          CREATE TABLE IF NOT EXISTS player_state (
             player_id INTEGER PRIMARY KEY REFERENCES players(player_id),
             data JSONB NOT NULL DEFAULT '{}'::jsonb
          );
-
-         INSERT INTO players (player_id, username, created_at) 
-         VALUES (1, 'TestPlayer', 1718000000) ON CONFLICT DO NOTHING;
-         
-         INSERT INTO player_state (player_id, data) 
-         VALUES (1, '{}') ON CONFLICT DO NOTHING;
       `);
+
+		await client.query(
+			`
+         INSERT INTO players (player_id, username, created_at, created_at_date) 
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT DO NOTHING;
+      `,
+			[
+				testPlayer.id,
+				testPlayer.username,
+				testPlayer.createdAt,
+				testPlayer.createdAtDate,
+			],
+		);
+
+		await client.query(
+			`
+         INSERT INTO player_state (player_id, data) 
+         VALUES ($1, '{}')
+         ON CONFLICT DO NOTHING;
+      `,
+			[testPlayer.id],
+		);
+
+		await client.query("COMMIT");
 		console.log("Database tables verified and ready.");
 	} catch (err) {
+		await client.query("ROLLBACK");
 		console.error("Database initialization failed:", err);
+	} finally {
+		client.release();
 	}
 }
 
@@ -76,15 +126,33 @@ app.get("/api/status", (req, res) => {
 
 app.get("/api/player/:id", async (req, res) => {
 	const { id } = req.params;
-	const result = await pool.query(
+
+	// 1. Get the JSONB game data
+	const stateResult = await pool.query(
 		"SELECT data FROM player_state WHERE player_id = $1",
 		[id],
 	);
 
-	if (result.rows.length === 0)
-		return res.status(404).json({ error: "Not found" });
+	// 2. Get the core account data (added the missing *)
+	const playerResult = await pool.query(
+		"SELECT * FROM players WHERE player_id = $1",
+		[id],
+	);
 
-	const state = { ...initState, ...result.rows[0].data };
+	if (stateResult.rows.length === 0 || playerResult.rows.length === 0) {
+		return res.status(404).json({ error: "Not found" });
+	}
+
+	const state = {
+		player: {
+			...playerResult.rows[0],
+		},
+		character: {
+			...initState,
+			...stateResult.rows[0].data,
+		},
+	};
+
 	res.json(state);
 });
 

@@ -2,8 +2,7 @@ import { state } from "../../model.js";
 
 export const bankViews = {
 	account: () => {
-		// Calculate dynamically exactly when the user clicks the account tab
-		let money = Number(state.stats.money);
+		let money = Number(state.character.money);
 		let moneycurrency = money.toLocaleString("en-US", {
 			style: "currency",
 			currency: "USD",
@@ -88,21 +87,21 @@ export const bankViews = {
 			<div class="row">
 				<div class="collumn">
 					<label for="loan-application-account">Account Number:</label>
-					<input id="loan-application-account" type="number">
+					<input id="loan-application-account" type="number" value="000000000000${state.player.player_id}" readonly>
 
 					<label for="loan-application-name">Name:</label>
-					<input id="loan-application-name" type="text">
+					<input id="loan-application-name" type="text" value="${state.player.username}" readonly>
 
 					<label for="loan-application-adress">Address:</label>
 					<input id="loan-application-adress" type="text">
 
 					<label for="loan-application-email">Email:</label>
-					<input id="loan-application-email" type="text">
+					<input id="loan-application-email" type="text" value="${state.player.username}@55clicks.com" readonly>
 				</div>
 
 				<div class="collumn">
 					<label for="loan-application-birth">Date of Birth:</label>
-					<input id="loan-application-birth" type="text">
+					<input id="loan-application-birth" type="text" value="${state.player.created_at_date}" readonly>
 
 					<label for="loan-application-employment-status">Employment status:</label>
 					<input id="loan-application-employment-status" type="text">

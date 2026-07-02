@@ -11,6 +11,7 @@ export const ui = {
 		inventory: document.getElementById("inventory"),
 		social: document.getElementById("social"),
 		health: document.getElementById("health"),
+		internet: document.getElementById("internet"),
 	},
 	middle: document.getElementById("middle"),
 	right: {
@@ -28,19 +29,19 @@ export const ui = {
  * @returns {void}
  */
 export function updateUI() {
-	ui.right.pId.innerText = "Player: " + state.userName;
+	ui.right.pId.innerText = "Player: " + state.player.username;
 	ui.right.pHealth.innerText = "Health: ";
 	ui.right.pMentalHealth.innerText = "Mental health: ";
 
-	let money = Number(state.stats.money);
+	let money = Number(state.character.money);
 	let moneycurrency = money.toLocaleString("en-US", {
 		style: "currency",
 		currency: "USD",
 	});
 
 	ui.right.pMoney.innerText = "Money: " + moneycurrency;
-	ui.right.pExperience.innerText = "Experience: " + state.stats.experience;
-	ui.right.pStamina.innerText = "Stamina: " + state.stats.stamina;
+	ui.right.pExperience.innerText = "Experience: " + state.character.experience;
+	ui.right.pStamina.innerText = "Stamina: " + state.character.stamina;
 
 	console.log(state);
 }

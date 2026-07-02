@@ -11,11 +11,7 @@ export const API_BASE =
  *
  * ### playerId: HARDCODED FOR DEVELOPMENT ###
  */
-export const state = {
-	playerId: 1,
-	username: "",
-	stats: {},
-};
+export let state = {};
 
 /**
  * Fills state object with database data
@@ -23,5 +19,5 @@ export const state = {
  * @returns {void}
  */
 export function updateState(newState) {
-	state.stats = newState;
+	state = newState;
 }
