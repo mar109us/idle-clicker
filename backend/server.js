@@ -34,6 +34,30 @@ const testPlayer = {
 	createdAtDate: "",
 };
 
+const property = {
+	nonCommercial: {
+		land: {},
+		farm: {},
+		house: {},
+		cabin: {},
+		apartment: {},
+		parking: {},
+	},
+	commercial: {
+		land: {},
+		store: {},
+		hotel: {},
+		office: {},
+		parking: {},
+		mall: {},
+		repair: {},
+		warehouse: {},
+		education: {},
+		industrial: {},
+		restaurant: {},
+	},
+};
+
 function createTestPlayer() {
 	const msCreated = new Date().getTime();
 
@@ -103,6 +127,83 @@ async function initializeDatabase() {
 	}
 }
 
+let propertyTypeSelected = "";
+let propertyCreatedAt = null;
+let propertyCreatedAtDate = "";
+
+function createTestProperty() {
+	const msCreated = new Date().getTime();
+
+	const formattedDate = new Intl.DateTimeFormat("en-GB")
+		.format(msCreated)
+		.replace(/\//g, "-");
+
+	let propertyType = ["nonCommercial", "commercial"];
+	let getRandomPropertyType = Math.floor(Math.random() * propertyType.length);
+	propertyTypeSelected = propertyType[getRandomPropertyType];
+	console.log(propertyTypeSelected);
+
+	propertyCreatedAt = msCreated;
+	console.log(propertyCreatedAt);
+
+	propertyCreatedAtDate = formattedDate;
+	console.log(propertyCreatedAtDate);
+}
+
+async function initializeProperty() {
+	createTestProperty();
+
+	const client = await pool.connect();
+
+	try {
+		await client.query("BEGIN");
+
+		await client.query(`
+         CREATE TABLE IF NOT EXISTS properties (
+            property_id SERIAL PRIMARY KEY,
+            type VARCHAR(50) NOT NULL,
+				created_at BIGINT NOT NULL,
+            created_at_date VARCHAR(50) NOT NULL
+         );
+
+         CREATE TABLE IF NOT EXISTS property_state (
+            property_id INTEGER PRIMARY KEY REFERENCES properties(property_id),
+            data JSONB NOT NULL DEFAULT '{}'::jsonb
+         );
+      `);
+
+		const propertyResult = await client.query(
+			`
+         INSERT INTO properties (type, created_at, created_at_date) 
+         VALUES ($1, $2, $3)
+         RETURNING property_id;
+         `,
+			[propertyTypeSelected, propertyCreatedAt, propertyCreatedAtDate],
+		);
+
+		if (propertyResult.rows.length > 0) {
+			const newPropertyId = propertyResult.rows[0].property_id;
+
+			await client.query(
+				`
+            INSERT INTO property_state (property_id, data) 
+            VALUES ($1, '{}')
+            ON CONFLICT DO NOTHING;
+            `,
+				[newPropertyId],
+			);
+		}
+
+		await client.query("COMMIT");
+		console.log("Database tables verified and ready.");
+	} catch (err) {
+		await client.query("ROLLBACK");
+		console.error("Database initialization failed:", err);
+	} finally {
+		client.release();
+	}
+}
+
 app.use((req, res, next) => {
 	const origin = req.headers.origin;
 
@@ -133,7 +234,7 @@ app.get("/api/player/:id", async (req, res) => {
 		[id],
 	);
 
-	// 2. Get the core account data (added the missing *)
+	// 2. Get the core account data
 	const playerResult = await pool.query(
 		"SELECT * FROM players WHERE player_id = $1",
 		[id],
@@ -154,6 +255,19 @@ app.get("/api/player/:id", async (req, res) => {
 	};
 
 	res.json(state);
+});
+
+app.get("/api/properties", async (req, res) => {
+	try {
+		const result = await pool.query(
+			"SELECT * FROM properties ORDER BY property_id ASC",
+		);
+
+		res.json(result.rows);
+	} catch (err) {
+		console.error("Database query failed:", err);
+		res.status(500).json({ error: "Internal server error" });
+	}
 });
 
 app.post("/api/action/exercise", async (req, res) => {
@@ -190,7 +304,7 @@ app.post("/api/action/exercise", async (req, res) => {
 		res.status(500).json({ error: "Action failed" });
 	}
 });
-
+initializeProperty();
 initializeDatabase().then(() => {
 	app.listen(PORT, () => {
 		console.log(`Server is running on http://localhost:${PORT}`);

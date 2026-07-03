@@ -1,8 +1,14 @@
-import { state, updateState, API_BASE } from "./model.js";
+import {
+	state,
+	updateState,
+	properties,
+	updateProperties,
+	API_BASE,
+} from "./model.js";
 import { ui, updateUI, showMainContent } from "./view.js";
 import { doExercise } from "/frontend/actions/left-menu/exercise.js";
 import { bankViews } from "/frontend/actions/left-menu/bank.js";
-import { internetViews } from "/frontend/actions/left-menu/internet.js";
+import { internetViews } from "/frontend/content/left-menu/internet/market/market.js";
 
 const TEST_PLAYER = 1;
 
@@ -26,11 +32,31 @@ async function loadPlayerData() {
 }
 loadPlayerData();
 
+/**
+ * Fetches data from property database and inserts it into property object
+ * @async
+ * @returns {Promise<void>}
+ */
+async function loadProperties() {
+	try {
+		const properties = await fetch(`${API_BASE}/api/properties`);
+		const dataFromDatabase = await properties.json();
+
+		if (properties.ok) {
+			updateProperties(dataFromDatabase);
+		}
+	} catch (err) {
+		console.error("Failed to load properties", err);
+	}
+	console.log(properties)
+}
+loadProperties();
+
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 
-showMainContent("internet");
+showMainContent("internet/internet");
 
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
@@ -45,7 +71,20 @@ ui.left.bank.addEventListener("click", () => showMainContent("bank"));
 ui.left.inventory.addEventListener("click", () => showMainContent("inventory"));
 ui.left.social.addEventListener("click", () => showMainContent("social"));
 ui.left.health.addEventListener("click", () => showMainContent("health"));
-ui.left.internet.addEventListener("click", () => showMainContent("internet"));
+ui.left.internet.addEventListener("click", () =>
+	showMainContent("internet/internet"),
+);
+
+/**
+ * Handles buttons that do page return navigation to root pages in middle section
+ * @returns {<void>}
+ */
+ui.middle.addEventListener("click", function (event) {
+	if (event.target.classList.contains("go-back")) {
+		const action = event.target.dataset.action;
+		showMainContent(action);
+	}
+});
 
 /**
  * Handles buttons in middle section

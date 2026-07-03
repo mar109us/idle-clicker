@@ -13,6 +13,8 @@ export const API_BASE =
  */
 export let state = {};
 
+export let properties = {};
+
 /**
  * Fills state object with database data
  * @param {JSON} newState Argument from loadPlayerData() containing player data from database
@@ -20,4 +22,8 @@ export let state = {};
  */
 export function updateState(newState) {
 	state = newState;
+}
+
+export function updateProperties(newState) {
+	properties = newState;
 }
