@@ -130,6 +130,11 @@ async function initializeDatabase() {
 let propertyTypeSelected = "";
 let propertyCreatedAt = null;
 let propertyCreatedAtDate = "";
+let propertyType = "land";
+let propertyImage = null;
+let propertySize = null;
+let propertyValue = null;
+let valuePerM2 = 8;
 
 function createTestProperty() {
 	const msCreated = new Date().getTime();
@@ -138,16 +143,19 @@ function createTestProperty() {
 		.format(msCreated)
 		.replace(/\//g, "-");
 
-	let propertyType = ["nonCommercial", "commercial"];
-	let getRandomPropertyType = Math.floor(Math.random() * propertyType.length);
+	/* 	let getRandomPropertyType = Math.floor(Math.random() * propertyType.length);
 	propertyTypeSelected = propertyType[getRandomPropertyType];
-	console.log(propertyTypeSelected);
+	console.log(propertyTypeSelected); */
 
 	propertyCreatedAt = msCreated;
-	console.log(propertyCreatedAt);
 
 	propertyCreatedAtDate = formattedDate;
-	console.log(propertyCreatedAtDate);
+
+	propertyImage = Math.floor(Math.random() * 10 + 1);
+
+	propertySize = Math.floor(Math.random() * 1000000 + 50);
+
+	propertyValue = propertySize * valuePerM2;
 }
 
 async function initializeProperty() {
@@ -160,10 +168,13 @@ async function initializeProperty() {
 
 		await client.query(`
          CREATE TABLE IF NOT EXISTS properties (
-            property_id SERIAL PRIMARY KEY,
+            property_id SERIAL PRIMARY KEY NOT NULL,
             type VARCHAR(50) NOT NULL,
 				created_at BIGINT NOT NULL,
-            created_at_date VARCHAR(50) NOT NULL
+            created_at_date VARCHAR(50) NOT NULL,
+				image BIGINT NOT NULL,
+				property_size BIGINT NOT NULL,
+				property_value BIGINT NOT NULL
          );
 
          CREATE TABLE IF NOT EXISTS property_state (
@@ -174,11 +185,18 @@ async function initializeProperty() {
 
 		const propertyResult = await client.query(
 			`
-         INSERT INTO properties (type, created_at, created_at_date) 
-         VALUES ($1, $2, $3)
+         INSERT INTO properties (type, created_at, created_at_date, image, property_size, property_value) 
+         VALUES ($1, $2, $3, $4, $5, $6)
          RETURNING property_id;
          `,
-			[propertyTypeSelected, propertyCreatedAt, propertyCreatedAtDate],
+			[
+				propertyType,
+				propertyCreatedAt,
+				propertyCreatedAtDate,
+				propertyImage,
+				propertySize,
+				propertyValue,
+			],
 		);
 
 		if (propertyResult.rows.length > 0) {

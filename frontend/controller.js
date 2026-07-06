@@ -8,7 +8,12 @@ import {
 import { ui, updateUI, showMainContent } from "./view.js";
 import { doExercise } from "/frontend/actions/left-menu/exercise.js";
 import { bankViews } from "/frontend/actions/left-menu/bank.js";
-import { internetViews } from "/frontend/content/left-menu/internet/market/market.js";
+import {
+	internetViews,
+	getItems,
+	buildMarketViewItems,
+	updateMarketPage,
+} from "./content/left-menu/internet/market/market.js";
 
 const TEST_PLAYER = 1;
 
@@ -37,7 +42,7 @@ loadPlayerData();
  * @async
  * @returns {Promise<void>}
  */
-async function loadProperties() {
+export async function loadProperties() {
 	try {
 		const properties = await fetch(`${API_BASE}/api/properties`);
 		const dataFromDatabase = await properties.json();
@@ -48,16 +53,26 @@ async function loadProperties() {
 	} catch (err) {
 		console.error("Failed to load properties", err);
 	}
-	console.log(properties)
+	console.log(properties);
+	getItems(); //update items
+
+	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
+	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
+	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
+	const outputDiv = document.getElementById("internet-output");
+	if (outputDiv && internetViews.marketPropertyBuyLand) {
+		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
+	}
+	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
+	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
+	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 }
 loadProperties();
 
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-
 showMainContent("internet/internet");
-
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
@@ -111,13 +126,19 @@ ui.middle.addEventListener("click", async function (event) {
 			outputDiv.innerHTML = bankViews[action]();
 		}
 	}
-	if (event.target.classList.contains("internet-nav")) {
-		const action = event.target.dataset.action;
+	const navElement = event.target.closest(".internet-nav");
+	if (navElement) {
+		const action = navElement.dataset.action;
+		const itemId = navElement.dataset.id;
 		const outputDiv = document.getElementById("internet-output");
 
 		if (outputDiv && internetViews[action]) {
-			outputDiv.innerHTML = internetViews[action]();
+			outputDiv.innerHTML = internetViews[action](itemId);
 		}
+	}
+	if (event.target.classList.contains("pagination-nav")) {
+		const direction = event.target.dataset.direction;
+		updateMarketPage(direction);
 	}
 });
 
