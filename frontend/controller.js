@@ -15,6 +15,7 @@ import {
 	updateMarketPage,
 } from "./content/left-menu/internet/market/market.js";
 
+
 const TEST_PLAYER = 1;
 
 /**
@@ -61,7 +62,8 @@ export async function loadProperties() {
 	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 	const outputDiv = document.getElementById("internet-output");
 	if (outputDiv && internetViews.marketPropertyBuyLand) {
-		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
+		/* outputDiv.innerHTML = internetViews.marketPropertyBuyLand();  */
+		outputDiv.innerHTML = internetViews.item(1);
 	}
 	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD

@@ -16,23 +16,24 @@ const allowedOrigins = [
 const initState = {
 	stamina: 999999,
 	mental: 999999,
-	money: 999999,
+	money: 50000000,
 
 	experience: 999999,
-
-	property: {},
-	car: {},
-	boat: {},
-
-	loan: {},
 };
 
-const testPlayer = {
+/* const testPlayer = {
 	id: 1,
 	username: "ionide",
 	createdAt: null,
 	createdAtDate: "",
-};
+}; */
+
+/* const testPlayer = {
+	id: 2,
+	username: "Garret",
+	createdAt: null,
+	createdAtDate: "",
+}; */
 
 const property = {
 	nonCommercial: {
@@ -73,7 +74,7 @@ function createTestPlayer() {
 }
 
 async function initializeDatabase() {
-	createTestPlayer();
+	/* createTestPlayer(); */
 
 	const client = await pool.connect();
 
@@ -135,6 +136,7 @@ let propertyImage = null;
 let propertySize = null;
 let propertyValue = null;
 let valuePerM2 = 8;
+let setOwner = 2;
 
 function createTestProperty() {
 	const msCreated = new Date().getTime();
@@ -174,7 +176,8 @@ async function initializeProperty() {
             created_at_date VARCHAR(50) NOT NULL,
 				image BIGINT NOT NULL,
 				property_size BIGINT NOT NULL,
-				property_value BIGINT NOT NULL
+				property_value BIGINT NOT NULL,
+				owner BIGINT NOT NULL
          );
 
          CREATE TABLE IF NOT EXISTS property_state (
@@ -185,8 +188,8 @@ async function initializeProperty() {
 
 		const propertyResult = await client.query(
 			`
-         INSERT INTO properties (type, created_at, created_at_date, image, property_size, property_value) 
-         VALUES ($1, $2, $3, $4, $5, $6)
+         INSERT INTO properties (type, created_at, created_at_date, image, property_size, property_value, owner) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
          RETURNING property_id;
          `,
 			[
@@ -196,6 +199,7 @@ async function initializeProperty() {
 				propertyImage,
 				propertySize,
 				propertyValue,
+				setOwner,
 			],
 		);
 
@@ -222,6 +226,96 @@ async function initializeProperty() {
 	}
 }
 
+app.post("/api/property/buy", async (req, res) => {
+	const { buyerId, propertyId } = req.body;
+	const client = await pool.connect();
+
+	try {
+		await client.query("BEGIN");
+
+		const propertyResult = await client.query(
+			"SELECT owner, property_value FROM properties WHERE property_id = $1 FOR UPDATE",
+			[propertyId],
+		);
+
+		if (propertyResult.rows.length === 0) {
+			throw new Error("Property not found");
+		}
+
+		const property = propertyResult.rows[0];
+		const sellerId = property.owner;
+		const price = parseInt(property.property_value);
+
+		if (parseInt(buyerId) === parseInt(sellerId)) {
+			throw new Error("You already own this property");
+		}
+
+		const buyerResult = await client.query(
+			"SELECT data FROM player_state WHERE player_id = $1 FOR UPDATE",
+			[buyerId],
+		);
+
+		if (buyerResult.rows.length === 0) throw new Error("Buyer not found");
+		let buyerState = { ...initState, ...buyerResult.rows[0].data };
+
+		if (buyerState.money < price) {
+			throw new Error("Insufficient funds");
+		}
+
+		const sellerResult = await client.query(
+			"SELECT data FROM player_state WHERE player_id = $1 FOR UPDATE",
+			[sellerId],
+		);
+
+		if (sellerResult.rows.length === 0) throw new Error("Seller not found");
+		let sellerState = { ...initState, ...sellerResult.rows[0].data };
+
+		buyerState.money -= price;
+		sellerState.money += price;
+
+		await client.query(
+			"UPDATE player_state SET data = $1 WHERE player_id = $2",
+			[buyerState, buyerId],
+		);
+
+		await client.query(
+			"UPDATE player_state SET data = $1 WHERE player_id = $2",
+			[sellerState, sellerId],
+		);
+
+		await client.query(
+			"UPDATE properties SET owner = $1 WHERE property_id = $2",
+			[buyerId, propertyId],
+		);
+
+		await client.query("COMMIT");
+
+		res.json({
+			success: true,
+			message: "Property purchased",
+			newBalance: buyerState.money,
+		});
+	} catch (err) {
+		await client.query("ROLLBACK");
+
+		const customErrors = [
+			"Property not found",
+			"You already own this property",
+			"Buyer not found",
+			"Seller not found",
+			"Insufficient funds",
+		];
+
+		const errorMessage = customErrors.includes(err.message)
+			? err.message
+			: "Transaction failed";
+
+		res.status(400).json({ error: errorMessage });
+	} finally {
+		client.release();
+	}
+});
+
 app.use((req, res, next) => {
 	const origin = req.headers.origin;
 
@@ -246,33 +340,42 @@ app.get("/api/status", (req, res) => {
 app.get("/api/player/:id", async (req, res) => {
 	const { id } = req.params;
 
-	// 1. Get the JSONB game data
-	const stateResult = await pool.query(
-		"SELECT data FROM player_state WHERE player_id = $1",
-		[id],
-	);
+	try {
+		const stateResult = await pool.query(
+			"SELECT data FROM player_state WHERE player_id = $1",
+			[id],
+		);
 
-	// 2. Get the core account data
-	const playerResult = await pool.query(
-		"SELECT * FROM players WHERE player_id = $1",
-		[id],
-	);
+		const playerResult = await pool.query(
+			"SELECT * FROM players WHERE player_id = $1",
+			[id],
+		);
 
-	if (stateResult.rows.length === 0 || playerResult.rows.length === 0) {
-		return res.status(404).json({ error: "Not found" });
+		const propertiesResult = await pool.query(
+			"SELECT * FROM properties WHERE owner = $1",
+			[id],
+		);
+
+		if (stateResult.rows.length === 0 || playerResult.rows.length === 0) {
+			return res.status(404).json({ error: "Not found" });
+		}
+
+		const state = {
+			player: {
+				...playerResult.rows[0],
+			},
+			character: {
+				...initState,
+				...stateResult.rows[0].data,
+			},
+			ownedProperties: propertiesResult.rows,
+		};
+
+		res.json(state);
+	} catch (err) {
+		console.error("Failed to fetch player:", err);
+		res.status(500).json({ error: "Internal server error" });
 	}
-
-	const state = {
-		player: {
-			...playerResult.rows[0],
-		},
-		character: {
-			...initState,
-			...stateResult.rows[0].data,
-		},
-	};
-
-	res.json(state);
 });
 
 app.get("/api/properties", async (req, res) => {

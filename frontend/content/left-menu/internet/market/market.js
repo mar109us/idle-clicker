@@ -37,7 +37,7 @@ const commercialTypes = [
 ];
 
 const buildMarketView = (title, backAction, buttons) => `
-<div style="justify-content:space-between;" class="row">
+<div class="row justify-between">
    <button class="internet-nav" data-action="${backAction}">↩</button>
    <h1>${title}</h1>
    <div></div>
@@ -52,10 +52,12 @@ const buildMarketView = (title, backAction, buttons) => `
 		.join("")}
 </div>`;
 
+const itemPerPage = 10;
+
 let items = "";
 let item = 0;
 let startItem = 0;
-let endItem = 4;
+let endItem = itemPerPage;
 let id = null;
 
 export function getItems() {
@@ -82,26 +84,20 @@ export function getItems() {
 				}
 			});
 			items += `
-				<div class="internet-nav" data-action="item" data-id="${id}" style="
-					height:fit-content;
-					width:35em;
-					padding:0em;
-					padding-left:1em;
-					margin:0em;
-					margin-bottom:1em;
-					background:none;
-					border: 1px solid black;
-					cursor: pointer;
-				">
-					<div class="row" style="justify-content:space-between; pointer-events: none;">
-						<div style="justify-content:space-between" class="collumn">
-							<h2>Norklickway ${id}, Klikkertown</h2>
-							<div style="justify-content:left" class="row">
-								<h2>${size.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} m²</h2>
-								<h2>$ ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</h2>
+				<div class="internet-nav shadow rounded items" data-action="item" data-id="${id}">
+					<div class="clean-row justify-between">
+						<div class="clean-collumn" style="justify-content:space-evenly">
+							<div>
+								<h3 class="weight-600">Public land for sale</h3>
+								<h4>Norklickway ${id}, Klikkertown</h4>
+							</div>
+							<div class="clean-row justify-left gap-1">
+								<h3 class="weight-600">${size.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} m²</h3>
+								<h3 class="weight-600">$ ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</h3>
 							</div>
 						</div>
-						<img src="./src/images/property/land/aerial/${image}.png" width="230em" height="130em">
+
+						<img src="./src/images/property/land/aerial/${image}.png">
 					</div>
 				</div>
 			`;
@@ -110,7 +106,7 @@ export function getItems() {
 getItems();
 
 export const buildMarketViewItems = (title, backAction) =>
-	`<div style="justify-content:space-between;" class="row">
+	`<div class="row justify-between">
    <button class="internet-nav" data-action="${backAction}">↩</button>
    <h1>${title}</h1>
 	<div></div>
@@ -128,11 +124,11 @@ export function updateMarketPage(direction) {
 	const maxItems = Object.keys(properties).length;
 
 	if (direction === "next" && endItem < maxItems) {
-		startItem += 4;
-		endItem += 4;
+		startItem += itemPerPage;
+		endItem += itemPerPage;
 	} else if (direction === "prev" && startItem > 0) {
-		startItem -= 4;
-		endItem -= 4;
+		startItem -= itemPerPage;
+		endItem -= itemPerPage;
 	}
 
 	getItems();
@@ -145,7 +141,7 @@ export function updateMarketPage(direction) {
 
 export const internetViews = {
 	market: () => `
-		<div style="justify-content:space-between;" class="row">
+		<div class="row justify-between">
 			<button class="go-back" data-action="internet/internet">↩</button>
 			<h1>Online Market</h1>
 			<div></div>
@@ -159,25 +155,64 @@ export const internetViews = {
 		</div>`,
 
 	item: (itemId) => `
-		<div style="justify-content:space-between;" class="row">
+		<div class="row justify-between">
 			<button class="internet-nav" data-action="marketPropertyBuyLand">↩</button>
-			<h1>Online Market</h1>
-			<div></div>
 		</div>
 
-		<div style="justify-content:space-between" class="collumn">
-			<img src="./src/images/property/land/aerial/${properties[itemId - 1].image}.png" width="500em" height="400em">
-							
-			<div style="justify-content:left; padding-top:1em;" class="row">
-				<h1>Norklickway ${properties[itemId - 1].property_id}, Klikkertown</h1>
+		<img class="shadow rounded item" src="./src/images/property/land/aerial/${properties[itemId - 1].image}.png">
+
+		<div class="clean-row item gap-5">
+			<div class="clean-collumn">
+			
+				<h1>Untouched land for sale in fantastic environment</h1>
+				<h4 class="text-highlight no-pbm">🛡 Norklickway ${properties[itemId - 1].property_id}, Klikkertown</h4>
+
+				<br><br>
+
+			<div class="clean-row justify-between">
+				<div class="clean-collumn">
+					<h3>Price</h3>
+					<h2>$ ${properties[itemId - 1].property_value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</h2>
+				</div>
+				
+				<div class="clean-collumn">
+					<h3>Property area</h3>
+					<h2>${properties[itemId - 1].property_size.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} m²</h2>
+				</div>
 			</div>
 
-			<div style="justify-content:left;" class="row">
-				<h2>${properties[itemId - 1].property_size} m²</h2>
-				<h2>$ ${properties[itemId - 1].property_value}</h2>
+				<br>
+				<hr>
+				<br>
+
+				<div class="justify-left gap-5">
+					<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate eveniet consequuntur eaque repudiandae quos ipsa necessitatibus autem, ducimus, reiciendis laudantium maxime incidunt possimus animi quisquam aliquid harum sapiente, dolore voluptas.</p>
+					<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate eveniet consequuntur eaque repudiandae quos ipsa necessitatibus autem, ducimus, reiciendis laudantium maxime incidunt possimus animi quisquam aliquid harum sapiente, dolore voluptas.</p>
+					<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate eveniet consequuntur eaque repudiandae quos ipsa necessitatibus autem, ducimus, reiciendis laudantium maxime incidunt possimus animi quisquam aliquid harum sapiente, dolore voluptas.</p>
+					<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate eveniet consequuntur eaque repudiandae quos ipsa necessitatibus autem, ducimus, reiciendis laudantium maxime incidunt possimus animi quisquam aliquid harum sapiente, dolore voluptas.</p>
+				</div>
+
 			</div>
 			
+			<div class="clean-collumn width-40 gap-1">
+				<div class="clean-collumn border rounded padding gap-1">
+					<h4 class="text-highlight">The National Office of Land Management</h4>
+					<h4 class="weight-600">Garret Sturgis</h4>
+					<h4>Department Manager / Land Management</h4>
+					<h4 class="weight-600">garret.sturgis@55clicks.com</h4>
+					<button class="max-width rounded">Send offer</button>
+				</div>
+
+				<div class="clean-collumn border rounded padding gap-1">
+					<h4>Property details</h4>
+					<button class="max-width rounded">See detailed information</button>
+				</div>
+			</div>	
 		</div>
+			
+		
+
+		
 		`,
 
 	marketProperty: () =>
