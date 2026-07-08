@@ -1,4 +1,4 @@
-import pool from "../db.js";
+import pool from "../db/db.js";
 
 const initState = {
 	stamina: 999999,

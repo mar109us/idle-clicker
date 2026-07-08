@@ -1,4 +1,4 @@
-import pool from "./db.js";
+import pool from "../db.js";
 
 async function runSetup() {
 	await initializeDatabase();
@@ -6,27 +6,20 @@ async function runSetup() {
 	await pool.end();
 }
 
-const initState = {
-	stamina: 999999,
-	mental: 999999,
-	money: 50000000,
-
-	experience: 999999,
-};
-
-/* const testPlayer = {
-	id: 1,
-	username: "ionide",
-	createdAt: null,
-	createdAtDate: "",
-}; */
-
-/* const testPlayer = {
-	id: 2,
-	username: "Garret",
-	createdAt: null,
-	createdAtDate: "",
-}; */
+const testPlayers = [
+	{
+		id: 1,
+		username: "ionide",
+		createdAt: null,
+		createdAtDate: "",
+	},
+	{
+		id: 2,
+		username: "garret",
+		createdAt: null,
+		createdAtDate: "",
+	},
+];
 
 const property = {
 	nonCommercial: {
@@ -52,22 +45,20 @@ const property = {
 	},
 };
 
-function createTestPlayer() {
+function prepareTestPlayers() {
 	const msCreated = new Date().getTime();
-
 	const formattedDate = new Intl.DateTimeFormat("en-GB")
 		.format(msCreated)
 		.replace(/\//g, "-");
 
-	testPlayer.createdAt = msCreated;
-	console.log(testPlayer.createdAt);
-
-	testPlayer.createdAtDate = formattedDate;
-	console.log(testPlayer.createdAtDate);
+	for (const player of testPlayers) {
+		player.createdAt = msCreated;
+		player.createdAtDate = formattedDate;
+	}
 }
 
 async function initializeDatabase() {
-	/* createTestPlayer(); */
+	prepareTestPlayers();
 
 	const client = await pool.connect();
 
@@ -75,44 +66,46 @@ async function initializeDatabase() {
 		await client.query("BEGIN");
 
 		await client.query(`
-         CREATE TABLE IF NOT EXISTS players (
-            player_id SERIAL PRIMARY KEY,
-            username VARCHAR(50) UNIQUE NOT NULL,
-            created_at BIGINT NOT NULL,
-            created_at_date VARCHAR(50) NOT NULL
-         );
+            CREATE TABLE IF NOT EXISTS players (
+                player_id SERIAL PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                created_at BIGINT NOT NULL,
+                created_at_date VARCHAR(50) NOT NULL
+            );
 
-         CREATE TABLE IF NOT EXISTS player_state (
-            player_id INTEGER PRIMARY KEY REFERENCES players(player_id),
-            data JSONB NOT NULL DEFAULT '{}'::jsonb
-         );
-      `);
+            CREATE TABLE IF NOT EXISTS player_state (
+                player_id INTEGER PRIMARY KEY REFERENCES players(player_id),
+                data JSONB NOT NULL DEFAULT '{}'::jsonb
+            );
+        `);
 
-		await client.query(
-			`
-         INSERT INTO players (player_id, username, created_at, created_at_date) 
-         VALUES ($1, $2, $3, $4)
-         ON CONFLICT DO NOTHING;
-      `,
-			[
-				testPlayer.id,
-				testPlayer.username,
-				testPlayer.createdAt,
-				testPlayer.createdAtDate,
-			],
-		);
+		for (const player of testPlayers) {
+			await client.query(
+				`
+                INSERT INTO players (player_id, username, created_at, created_at_date) 
+                VALUES ($1, $2, $3, $4)
+                ON CONFLICT DO NOTHING;
+                `,
+				[
+					player.id,
+					player.username,
+					player.createdAt,
+					player.createdAtDate,
+				],
+			);
 
-		await client.query(
-			`
-         INSERT INTO player_state (player_id, data) 
-         VALUES ($1, '{}')
-         ON CONFLICT DO NOTHING;
-      `,
-			[testPlayer.id],
-		);
+			await client.query(
+				`
+                INSERT INTO player_state (player_id, data) 
+                VALUES ($1, '{}')
+                ON CONFLICT DO NOTHING;
+                `,
+				[player.id],
+			);
+		}
 
 		await client.query("COMMIT");
-		console.log("Database tables verified and ready.");
+		console.log("Database tables verified and players ready.");
 	} catch (err) {
 		await client.query("ROLLBACK");
 		console.error("Database initialization failed:", err);

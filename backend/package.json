@@ -5,7 +5,9 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "node --env-file=.env --watch-path=server.js --watch-path=db.js server.js",
-		"start": "node --env-file=.env server.js"
+		"start": "node server.js",
+		"setup": "node --env-file=.env scripts/setup-db.js",
+		"wipe": "node --env-file=.env scripts/wipe.js"
 	},
 	"repository": {
 		"type": "git",
