@@ -200,7 +200,7 @@ export const internetViews = {
 					<h4 class="weight-600">Garret Sturgis</h4>
 					<h4>Department Manager / Land Management</h4>
 					<h4 class="weight-600">garret.sturgis@55clicks.com</h4>
-					<button class="max-width rounded">Send offer</button>
+					<button class="buy-property max-width rounded" data-action="${itemId}">Send offer</button>
 				</div>
 
 				<div class="clean-collumn border rounded padding gap-1">

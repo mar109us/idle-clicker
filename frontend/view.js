@@ -15,12 +15,13 @@ export const ui = {
 	},
 	middle: document.getElementById("middle"),
 	right: {
-		pId: document.getElementById("player-id"),
-		pHealth: document.getElementById("player-health"),
-		pMentalHealth: document.getElementById("player-mental-health"),
-		pMoney: document.getElementById("player-money"),
-		pExperience: document.getElementById("player-experience"),
-		pStamina: document.getElementById("player-stamina"),
+		playerId: document.getElementById("player-id"),
+		playerHealth: document.getElementById("player-health"),
+		playerMentalHealth: document.getElementById("player-mental-health"),
+		playerMoney: document.getElementById("player-money"),
+		playerExperience: document.getElementById("player-experience"),
+		playerStamina: document.getElementById("player-stamina"),
+		playerProperties: document.getElementById("player-properties"),
 	},
 };
 
@@ -29,9 +30,9 @@ export const ui = {
  * @returns {void}
  */
 export function updateUI() {
-	ui.right.pId.innerText = "Player: " + state.player.username;
-	ui.right.pHealth.innerText = "Health: ";
-	ui.right.pMentalHealth.innerText = "Mental health: ";
+	ui.right.playerId.innerText = "Player: " + state.player.username;
+	ui.right.playerHealth.innerText = "Health: ";
+	ui.right.playerMentalHealth.innerText = "Mental health: ";
 
 	let money = Number(state.character.money);
 	let moneycurrency = money.toLocaleString("en-US", {
@@ -39,9 +40,18 @@ export function updateUI() {
 		currency: "USD",
 	});
 
-	ui.right.pMoney.innerText = "Money: " + moneycurrency;
-	ui.right.pExperience.innerText = "Experience: " + state.character.experience;
-	ui.right.pStamina.innerText = "Stamina: " + state.character.stamina;
+	ui.right.playerMoney.innerText = "Money: " + moneycurrency;
+	ui.right.playerExperience.innerText =
+		"Experience: " + state.character.experience;
+	ui.right.playerStamina.innerText = "Stamina: " + state.character.stamina;
+	ui.right.playerProperties.innerText = "Owned properties: ";
+	Object.values(state.ownedProperties).forEach((row) => {
+		Object.entries(row).forEach(([key, value]) => {
+			if (key === "property_id") {
+				ui.right.playerProperties.innerText += `\nNorklickway ${value}, Klikkertown`;
+			}
+		});
+	});
 
 	console.log(state);
 }

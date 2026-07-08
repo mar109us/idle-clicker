@@ -15,7 +15,6 @@ import {
 	updateMarketPage,
 } from "./content/left-menu/internet/market/market.js";
 
-
 const TEST_PLAYER = 1;
 
 /**
@@ -62,8 +61,8 @@ export async function loadProperties() {
 	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 	const outputDiv = document.getElementById("internet-output");
 	if (outputDiv && internetViews.marketPropertyBuyLand) {
-		/* outputDiv.innerHTML = internetViews.marketPropertyBuyLand();  */
-		outputDiv.innerHTML = internetViews.item(1);
+		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
+		/* outputDiv.innerHTML = internetViews.item(1); */
 	}
 	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
@@ -141,6 +140,59 @@ ui.middle.addEventListener("click", async function (event) {
 	if (event.target.classList.contains("pagination-nav")) {
 		const direction = event.target.dataset.direction;
 		updateMarketPage(direction);
+	}
+
+	const buyButton = event.target.closest(".buy-property");
+	if (buyButton) {
+		const action = buyButton.dataset.action;
+		const itemId = buyButton.dataset.id;
+
+		const payload = {
+			buyerId: 1,
+			propertyId: action,
+			price: null,
+		};
+
+		const targetProperty = properties.find(
+			(p) => p.property_id == payload.propertyId,
+		);
+
+		if (targetProperty) {
+			payload.price = `${targetProperty.property_value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`;
+		}
+
+		try {
+			if (
+				confirm(
+					`Buy Norklickway ${payload.propertyId}? \n\nPrice\n$ ${payload.price}`,
+				) === false
+			) {
+				return;
+			}
+			const response = await fetch(
+				"http://localhost:3000/api/property/buy",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(payload),
+				},
+			);
+
+			const data = await response.json();
+
+			if (response.ok) {
+				console.log("Purchase successful!", data);
+				alert("Property purchased!");
+			} else {
+				console.error("Purchase failed:", data.error);
+				alert("Error: " + data.error);
+			}
+		} catch (err) {
+			console.error("Network error:", err);
+		}
+		loadPlayerData();
 	}
 });
 

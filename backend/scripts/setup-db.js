@@ -1,4 +1,4 @@
-import pool from "../db.js";
+import pool from "../db/db.js";
 
 async function runSetup() {
 	await initializeDatabase();
@@ -114,41 +114,7 @@ async function initializeDatabase() {
 	}
 }
 
-let propertyTypeSelected = "";
-let propertyCreatedAt = null;
-let propertyCreatedAtDate = "";
-let propertyType = "land";
-let propertyImage = null;
-let propertySize = null;
-let propertyValue = null;
-let valuePerM2 = 8;
-let setOwner = 2;
-
-function createTestProperty() {
-	const msCreated = new Date().getTime();
-
-	const formattedDate = new Intl.DateTimeFormat("en-GB")
-		.format(msCreated)
-		.replace(/\//g, "-");
-
-	/* 	let getRandomPropertyType = Math.floor(Math.random() * propertyType.length);
-	propertyTypeSelected = propertyType[getRandomPropertyType];
-	console.log(propertyTypeSelected); */
-
-	propertyCreatedAt = msCreated;
-
-	propertyCreatedAtDate = formattedDate;
-
-	propertyImage = Math.floor(Math.random() * 10 + 1);
-
-	propertySize = Math.floor(Math.random() * 1000000 + 50);
-
-	propertyValue = propertySize * valuePerM2;
-}
-
 async function initializeProperty() {
-	createTestProperty();
-
 	const client = await pool.connect();
 
 	try {
@@ -171,36 +137,6 @@ async function initializeProperty() {
             data JSONB NOT NULL DEFAULT '{}'::jsonb
          );
       `);
-
-		const propertyResult = await client.query(
-			`
-         INSERT INTO properties (type, created_at, created_at_date, image, property_size, property_value, owner) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
-         RETURNING property_id;
-         `,
-			[
-				propertyType,
-				propertyCreatedAt,
-				propertyCreatedAtDate,
-				propertyImage,
-				propertySize,
-				propertyValue,
-				setOwner,
-			],
-		);
-
-		if (propertyResult.rows.length > 0) {
-			const newPropertyId = propertyResult.rows[0].property_id;
-
-			await client.query(
-				`
-            INSERT INTO property_state (property_id, data) 
-            VALUES ($1, '{}')
-            ON CONFLICT DO NOTHING;
-            `,
-				[newPropertyId],
-			);
-		}
 
 		await client.query("COMMIT");
 		console.log("Database tables verified and ready.");

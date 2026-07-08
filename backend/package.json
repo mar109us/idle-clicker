@@ -4,10 +4,11 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"dev": "node --env-file=.env --watch-path=server.js --watch-path=db.js server.js",
+		"dev": "node --env-file=.env --watch-path=server.js --watch-path=db/db.js server.js",
 		"start": "node server.js",
 		"setup": "node --env-file=.env scripts/setup-db.js",
-		"wipe": "node --env-file=.env scripts/wipe.js"
+		"wipe": "node --env-file=.env scripts/wipe.js",
+		"newproperty": "node --env-file=.env scripts/seed-property.js"
 	},
 	"repository": {
 		"type": "git",
