@@ -1,11 +1,5 @@
 import pool from "../db/db.js";
-
-const initState = {
-	stamina: 999999,
-	mental: 999999,
-	money: 50000000,
-	experience: 999999,
-};
+import { initState } from "../controllers/playerStats.js";
 
 const costs = { Walk: 5, Jog: 10, Run: 15, Gym: 20, "Personal trainer": 30 };
 const expGain = 5;

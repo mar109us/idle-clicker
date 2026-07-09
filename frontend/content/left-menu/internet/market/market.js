@@ -1,6 +1,6 @@
-import { state } from "../../../../model.js";
+import { state, properties } from "../../../../model.js";
 import { ui } from "../../../../view.js";
-import { properties } from "../../../../model.js";
+import { loadProperties, initializeApp } from "../../../../controller.js";
 
 const propertyCategory = [
 	{ id: "Buy", label: "Buy" },
@@ -54,70 +54,66 @@ const buildMarketView = (title, backAction, buttons) => `
 
 const itemPerPage = 10;
 
-let items = "";
-let item = 0;
-let startItem = 0;
-let endItem = itemPerPage;
-let id = null;
+let items;
 
 export function getItems() {
 	items = "";
-	let size = null;
-	let price = null;
-	let image = null;
 
-	Object.values(properties)
-		.slice(startItem, endItem)
-		.forEach((row) => {
-			Object.entries(row).forEach(([key, value]) => {
-				if (key === "property_id") {
-					id = value;
-				}
-				if (key === "property_size") {
-					size = value;
-				}
-				if (key === "property_value") {
-					price = value;
-				}
-				if (key === "image") {
-					image = value;
-				}
-			});
+
+	const sortedProperties = [...properties].sort(
+		(a, b) => a.property_value - b.property_value,
+	);
+	sortedProperties.reverse();
+
+	const targetProperty = sortedProperties.forEach((key) => {
+		if (key.available) {
 			items += `
-				<div class="internet-nav shadow rounded items" data-action="item" data-id="${id}">
+				<div class="internet-nav shadow rounded items" data-action="item" data-id="${key.property_id}">
 					<div class="clean-row justify-between">
 						<div class="clean-collumn" style="justify-content:space-evenly">
 							<div>
 								<h3 class="weight-600">Public land for sale</h3>
-								<h4>Norklickway ${id}, Klikkertown</h4>
+								<h4>Norklickway ${key.property_id}, Klikkertown</h4>
 							</div>
 							<div class="clean-row justify-left gap-1">
-								<h3 class="weight-600">${size.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} m²</h3>
-								<h3 class="weight-600">$ ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</h3>
+								<h3 class="weight-600">${key.property_size.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} m²</h3>
+								<h3 class="weight-600">$ ${key.property_value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</h3>
 							</div>
 						</div>
 
-						<img src="./src/images/property/land/aerial/${image}.png">
+						<img src="./src/images/property/land/aerial/${key.image}.png">
 					</div>
 				</div>
 			`;
-		});
+		}
+	});
 }
-getItems();
+/* getItems(); */
 
-export const buildMarketViewItems = (title, backAction) =>
-	`<div class="row justify-between">
-   <button class="internet-nav" data-action="${backAction}">↩</button>
-   <h1>${title}</h1>
-	<div></div>
-</div>
+export const buildMarketViewItems = (title, backAction) => `
+	<div class="row justify-between">
+		<button class="internet-nav" data-action="${backAction}">↩</button>
+		<h1>${title}</h1>
+		<div></div>
+	</div>
 
-<div id="property-list" class="collumn">${items}</div>
+	<div id="property-list" class="collumn">
+		<div class="clean-row align-end gap-1 padding-bottom">
+			<label for="price">Sort</label>
+			<select name="price" id="price-sort">
+				<option value="pricedown" id="pricedown">Price (lowest first)</option>
+				<option value="priceup">Price (highest first)</option>
+			</select>
+		</div>
+		${items}
+	</div>
 
-<div class="row">
-   <button class="pagination-nav" data-direction="prev">Prev</button>
-   <button class="pagination-nav" data-direction="next">Next</button>
-</div>
+	
+
+	<div class="row">
+		<button class="pagination-nav" data-direction="prev">Prev</button>
+		<button class="pagination-nav" data-direction="next">Next</button>
+	</div>
 `;
 
 export function updateMarketPage(direction) {
@@ -132,11 +128,6 @@ export function updateMarketPage(direction) {
 	}
 
 	getItems();
-
-	const listContainer = document.getElementById("property-list");
-	if (listContainer) {
-		listContainer.innerHTML = items;
-	}
 }
 
 export const internetViews = {

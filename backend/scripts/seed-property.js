@@ -9,6 +9,7 @@ let propertySize = null;
 let propertyValue = null;
 let valuePerM2 = 15;
 let setOwner = 2;
+let isAvailable = true;
 
 function createTestProperty() {
 	const msCreated = new Date().getTime();
@@ -49,8 +50,8 @@ async function seedProperty() {
 
 		const propertyResult = await client.query(
 			`
-         INSERT INTO properties (type, created_at, created_at_date, image, property_size, property_value, owner) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         INSERT INTO properties (type, created_at, created_at_date, image, property_size, property_value, owner, available) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING property_id;
          `,
 			[
@@ -61,18 +62,11 @@ async function seedProperty() {
 				propertySize,
 				propertyValue,
 				setOwner,
+				isAvailable,
 			],
 		);
 
 		const newPropertyId = propertyResult.rows[0].property_id;
-
-		await client.query(
-			`
-            INSERT INTO property_state (property_id, data) 
-            VALUES ($1, '{}');
-            `,
-			[newPropertyId],
-		);
 
 		await client.query("COMMIT");
 		console.log(
@@ -94,4 +88,4 @@ async function seed(count) {
 	console.log(`Batch complete. Created ${count} properties.`);
 }
 
-seed(20);
+seed(100);

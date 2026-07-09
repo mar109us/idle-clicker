@@ -27,7 +27,6 @@ export const ui = {
 
 /**
  * Assigns values to DOM elements with data from player stats
- * @returns {void}
  */
 export function updateUI() {
 	ui.right.playerId.innerText = "Player: " + state.player.username;
@@ -53,14 +52,12 @@ export function updateUI() {
 		});
 	});
 
-	console.log(state);
+	/* console.log(state); */
 }
 
 /**
  * Fetches and displays HTML content to middle section depending on received argument
  * @param {string} selectedContent - Name of an HTML document without file extension
- * @async
- * @returns {Promise<void>}
  */
 export async function showMainContent(selectedContent) {
 	try {

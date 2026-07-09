@@ -14,6 +14,7 @@ export async function buyProperty(req, res) {
     } catch (err) {
         const customErrors = [
             "Property not found",
+				"This property is not for sale",
             "You already own this property",
             "Buyer not found",
             "Seller not found",

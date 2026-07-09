@@ -17,10 +17,21 @@ import {
 
 const TEST_PLAYER = 1;
 
+export async function initializeApp() {
+	await loadPlayerData();
+	await loadProperties();
+	await getItems();
+	await showMainContent("internet/internet");
+	const outputDiv = document.getElementById("internet-output");
+	if (outputDiv && internetViews.marketPropertyBuyLand) {
+		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
+		/* outputDiv.innerHTML = internetViews.item(8); */
+	}
+}
+initializeApp();
+
 /**
  * Fetches data from player database and inserts it into state object
- * @async
- * @returns {Promise<void>}
  */
 async function loadPlayerData() {
 	try {
@@ -35,48 +46,23 @@ async function loadPlayerData() {
 		console.error("Failed to load player", err);
 	}
 }
-loadPlayerData();
 
 /**
  * Fetches data from property database and inserts it into property object
- * @async
- * @returns {Promise<void>}
  */
 export async function loadProperties() {
 	try {
-		const properties = await fetch(`${API_BASE}/api/properties`);
-		const dataFromDatabase = await properties.json();
+		const load = await fetch(`${API_BASE}/api/properties`);
+		const dataFromDatabase = await load.json();
 
-		if (properties.ok) {
+		if (load.ok) {
 			updateProperties(dataFromDatabase);
 		}
 	} catch (err) {
 		console.error("Failed to load properties", err);
 	}
-	console.log(properties);
-	getItems(); //update items
-
-	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-	const outputDiv = document.getElementById("internet-output");
-	if (outputDiv && internetViews.marketPropertyBuyLand) {
-		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
-		/* outputDiv.innerHTML = internetViews.item(1); */
-	}
-	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-	// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 }
 loadProperties();
-
-// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-showMainContent("internet/internet");
-// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
-// SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD // SET DEFAULT PAGE TO LOAD
 
 ui.left.study.addEventListener("click", () => showMainContent("study"));
 ui.left.work.addEventListener("click", () => showMainContent("work"));
@@ -93,7 +79,6 @@ ui.left.internet.addEventListener("click", () =>
 
 /**
  * Handles buttons that do page return navigation to root pages in middle section
- * @returns {<void>}
  */
 ui.middle.addEventListener("click", function (event) {
 	if (event.target.classList.contains("go-back")) {
@@ -104,8 +89,6 @@ ui.middle.addEventListener("click", function (event) {
 
 /**
  * Handles buttons in middle section
- * @async
- * @returns {Promise<void>}
  */
 ui.middle.addEventListener("click", async function (event) {
 	if (event.target.classList.contains("button-exercise")) {
@@ -119,6 +102,7 @@ ui.middle.addEventListener("click", async function (event) {
 			updateUI();
 		}
 	}
+
 	if (event.target.classList.contains("bank-nav")) {
 		const action = event.target.dataset.action;
 		const outputDiv = document.getElementById("bank-output");
@@ -127,6 +111,7 @@ ui.middle.addEventListener("click", async function (event) {
 			outputDiv.innerHTML = bankViews[action]();
 		}
 	}
+
 	const navElement = event.target.closest(".internet-nav");
 	if (navElement) {
 		const action = navElement.dataset.action;
@@ -137,6 +122,7 @@ ui.middle.addEventListener("click", async function (event) {
 			outputDiv.innerHTML = internetViews[action](itemId);
 		}
 	}
+
 	if (event.target.classList.contains("pagination-nav")) {
 		const direction = event.target.dataset.direction;
 		updateMarketPage(direction);
@@ -192,13 +178,12 @@ ui.middle.addEventListener("click", async function (event) {
 		} catch (err) {
 			console.error("Network error:", err);
 		}
-		loadPlayerData();
+		initializeApp();
 	}
 });
 
 /**
  * Handles submit buttons in middle section
- * @returns {void}
  */
 ui.middle.addEventListener("submit", function (event) {
 	if (event.target.id === "loan-form") {
@@ -212,4 +197,13 @@ ui.middle.addEventListener("submit", function (event) {
 			outputDiv.innerHTML = bankViews.application(selectedLoan);
 		}
 	}
+});
+
+/**
+ * Handles selection in middle section
+ */
+ui.middle.addEventListener("select", function (event) {
+	/* if (event.target.id === "pricedown") {
+	} */
+	console.log("mew");
 });

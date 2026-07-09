@@ -1,65 +1,82 @@
 import pool from "../db/db.js";
-
-const initState = { stamina: 999999, mental: 999999, money: 50000000, experience: 999999 };
+import { initState } from "../controllers/playerStats.js";
 
 export async function processPropertyPurchase(buyerId, propertyId) {
-    const client = await pool.connect();
+	const client = await pool.connect();
 
-    try {
-        await client.query("BEGIN");
+	try {
+		await client.query("BEGIN");
 
-        const propertyResult = await client.query(
-            "SELECT owner, property_value FROM properties WHERE property_id = $1 FOR UPDATE",
-            [propertyId]
-        );
+		const propertyResult = await client.query(
+			"SELECT owner, property_value, available FROM properties WHERE property_id = $1 FOR UPDATE",
+			[propertyId],
+		);
 
-        if (propertyResult.rows.length === 0) throw new Error("Property not found");
+		if (propertyResult.rows.length === 0)
+			throw new Error("Property not found");
 
-        const property = propertyResult.rows[0];
-        const sellerId = property.owner;
-        const price = parseInt(property.property_value);
+		const property = propertyResult.rows[0];
+		const sellerId = property.owner;
+		const price = parseInt(property.property_value);
+		const available = property.available;
 
-        if (parseInt(buyerId) === parseInt(sellerId)) throw new Error("You already own this property");
+		if (available === false) throw new Error("This property is not for sale");
 
-        const buyerResult = await client.query(
-            "SELECT data FROM player_state WHERE player_id = $1 FOR UPDATE",
-            [buyerId]
-        );
+		if (parseInt(buyerId) === parseInt(sellerId))
+			throw new Error("You already own this property");
 
-        if (buyerResult.rows.length === 0) throw new Error("Buyer not found");
-        let buyerState = { ...initState, ...buyerResult.rows[0].data };
+		const buyerResult = await client.query(
+			"SELECT data FROM player_state WHERE player_id = $1 FOR UPDATE",
+			[buyerId],
+		);
 
-        if (buyerState.money < price) throw new Error("Insufficient funds");
+		if (buyerResult.rows.length === 0) throw new Error("Buyer not found");
+		let buyerState = { ...initState, ...buyerResult.rows[0].data };
 
-        const sellerResult = await client.query(
-            "SELECT data FROM player_state WHERE player_id = $1 FOR UPDATE",
-            [sellerId]
-        );
+		if (buyerState.money < price) throw new Error("Insufficient funds");
 
-        if (sellerResult.rows.length === 0) throw new Error("Seller not found");
-        let sellerState = { ...initState, ...sellerResult.rows[0].data };
+		const sellerResult = await client.query(
+			"SELECT data FROM player_state WHERE player_id = $1 FOR UPDATE",
+			[sellerId],
+		);
 
-        buyerState.money -= price;
-        sellerState.money += price;
+		if (sellerResult.rows.length === 0) throw new Error("Seller not found");
+		let sellerState = { ...initState, ...sellerResult.rows[0].data };
 
-        await client.query("UPDATE player_state SET data = $1 WHERE player_id = $2", [buyerState, buyerId]);
-        await client.query("UPDATE player_state SET data = $1 WHERE player_id = $2", [sellerState, sellerId]);
-        await client.query("UPDATE properties SET owner = $1 WHERE property_id = $2", [buyerId, propertyId]);
+		buyerState.money -= price;
+		sellerState.money += price;
 
-        await client.query("COMMIT");
-        
-        return buyerState.money;
-    } catch (err) {
-        await client.query("ROLLBACK");
-        throw err; // Pass the error up to the controller
-    } finally {
-        client.release();
-    }
+		await client.query(
+			"UPDATE player_state SET data = $1 WHERE player_id = $2",
+			[buyerState, buyerId],
+		);
+		await client.query(
+			"UPDATE player_state SET data = $1 WHERE player_id = $2",
+			[sellerState, sellerId],
+		);
+		await client.query(
+			"UPDATE properties SET owner = $1 WHERE property_id = $2",
+			[buyerId, propertyId],
+		);
+		await client.query(
+			"UPDATE properties SET available = FALSE WHERE property_id = $1",
+			[propertyId],
+		);
+
+		await client.query("COMMIT");
+
+		return buyerState.money;
+	} catch (err) {
+		await client.query("ROLLBACK");
+		throw err;
+	} finally {
+		client.release();
+	}
 }
 
 export async function getAllProperties() {
-    const result = await pool.query(
-        "SELECT * FROM properties ORDER BY property_id ASC"
-    );
-    return result.rows;
+	const result = await pool.query(
+		"SELECT * FROM properties ORDER BY property_id ASC",
+	);
+	return result.rows;
 }

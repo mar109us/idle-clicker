@@ -129,14 +129,9 @@ async function initializeProperty() {
 				image BIGINT NOT NULL,
 				property_size BIGINT NOT NULL,
 				property_value BIGINT NOT NULL,
-				owner BIGINT NOT NULL
-         );
-
-         CREATE TABLE IF NOT EXISTS property_state (
-            property_id INTEGER PRIMARY KEY REFERENCES properties(property_id),
-            data JSONB NOT NULL DEFAULT '{}'::jsonb
-         );
-      `);
+				owner BIGINT NOT NULL,
+				available BOOLEAN NOT NULL
+         );`);
 
 		await client.query("COMMIT");
 		console.log("Database tables verified and ready.");
