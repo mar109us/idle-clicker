@@ -13,6 +13,7 @@ import {
 	getItems,
 	buildMarketViewItems,
 	updateMarketPage,
+	sortItems,
 } from "./content/left-menu/internet/market/market.js";
 
 const TEST_PLAYER = 1;
@@ -20,7 +21,9 @@ const TEST_PLAYER = 1;
 export async function initializeApp() {
 	await loadPlayerData();
 	await loadProperties();
+	await sortItems();
 	await getItems();
+
 	await showMainContent("internet/internet");
 	const outputDiv = document.getElementById("internet-output");
 	if (outputDiv && internetViews.marketPropertyBuyLand) {
@@ -124,8 +127,12 @@ ui.middle.addEventListener("click", async function (event) {
 	}
 
 	if (event.target.classList.contains("pagination-nav")) {
+		ui.middle.scrollTo({ top: 0, behavior: 'smooth' });
 		const direction = event.target.dataset.direction;
 		updateMarketPage(direction);
+		const outputDiv = document.getElementById("internet-output");
+		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
+		
 	}
 
 	const buyButton = event.target.closest(".buy-property");
@@ -202,8 +209,20 @@ ui.middle.addEventListener("submit", function (event) {
 /**
  * Handles selection in middle section
  */
-ui.middle.addEventListener("select", function (event) {
-	/* if (event.target.id === "pricedown") {
-	} */
-	console.log("mew");
+ui.middle.addEventListener("change", function (event) {
+
+	console.log(event.target.value)
+	if (event.target.value === "low") {
+		console.log("low");
+		sortItems("low");
+		const outputDiv = document.getElementById("internet-output");
+		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
+	}
+	if (event.target.value === "high") {
+		console.log("high");
+		sortItems("high");
+		const outputDiv = document.getElementById("internet-output");
+		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
+	}
+	
 });

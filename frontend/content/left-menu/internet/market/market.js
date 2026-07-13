@@ -52,22 +52,37 @@ const buildMarketView = (title, backAction, buttons) => `
 		.join("")}
 </div>`;
 
-const itemPerPage = 10;
+const itemPerPage = 25;
+let startItem = 0;
+let endItem = itemPerPage;
 
-let items;
+let items = "";
+let sortedProperties = [];
+
+let sortMethod = "Sort";
+export function sortItems(action) {
+	sortedProperties = properties
+		.filter((p) => p.available)
+		.sort((a, b) => a.property_value - b.property_value);
+	if (action === "high") {
+		sortMethod = "Price (highest first)";
+		sortedProperties.reverse();
+	}
+	if (action === "low") {
+		sortMethod = "Price (lowest first)";
+	}
+	startItem = 0;
+	endItem = itemPerPage;
+
+	getItems();
+}
 
 export function getItems() {
 	items = "";
 
-
-	const sortedProperties = [...properties].sort(
-		(a, b) => a.property_value - b.property_value,
-	);
-	sortedProperties.reverse();
-
-	const targetProperty = sortedProperties.forEach((key) => {
-		if (key.available) {
-			items += `
+	const slicedProperties = sortedProperties.slice(startItem, endItem);
+	slicedProperties.forEach((key) => {
+		items += `
 				<div class="internet-nav shadow rounded items" data-action="item" data-id="${key.property_id}">
 					<div class="clean-row justify-between">
 						<div class="clean-collumn" style="justify-content:space-evenly">
@@ -85,10 +100,9 @@ export function getItems() {
 					</div>
 				</div>
 			`;
-		}
 	});
+	
 }
-/* getItems(); */
 
 export const buildMarketViewItems = (title, backAction) => `
 	<div class="row justify-between">
@@ -99,10 +113,10 @@ export const buildMarketViewItems = (title, backAction) => `
 
 	<div id="property-list" class="collumn">
 		<div class="clean-row align-end gap-1 padding-bottom">
-			<label for="price">Sort</label>
-			<select name="price" id="price-sort">
-				<option value="pricedown" id="pricedown">Price (lowest first)</option>
-				<option value="priceup">Price (highest first)</option>
+			<select name="price" id="price">
+			   <option selected disabled hidden>${sortMethod}</option>
+				<option value="low">Price (lowest first)</option>
+				<option value="high">Price (highest first)</option>
 			</select>
 		</div>
 		${items}
@@ -117,17 +131,19 @@ export const buildMarketViewItems = (title, backAction) => `
 `;
 
 export function updateMarketPage(direction) {
-	const maxItems = Object.keys(properties).length;
+	console.log(direction)
+	const maxItems = sortedProperties.length;
 
-	if (direction === "next" && endItem < maxItems) {
+	if (direction === "next" && startItem + itemPerPage < maxItems) {
 		startItem += itemPerPage;
 		endItem += itemPerPage;
 	} else if (direction === "prev" && startItem > 0) {
 		startItem -= itemPerPage;
 		endItem -= itemPerPage;
 	}
-
+	console.log("klsjgølsjrg");
 	getItems();
+	
 }
 
 export const internetViews = {
