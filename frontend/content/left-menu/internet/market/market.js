@@ -37,11 +37,11 @@ const commercialTypes = [
 ];
 
 const buildMarketView = (title, backAction, buttons) => `
-<div class="row justify-between">
-   <button class="internet-nav" data-action="${backAction}">↩</button>
-   <h1>${title}</h1>
-   <div></div>
-</div>
+	<div class="row justify-between padding" style="position:sticky;top:0px;background-color:white;width:100%;">
+		<button class="internet-nav" data-action="${backAction}">↩</button>
+   	<h1>${title}</h1>
+   	<div></div>
+	</div>
 
 <div class="row">
    ${buttons
@@ -101,37 +101,40 @@ export function getItems() {
 				</div>
 			`;
 	});
-	
 }
 
 export const buildMarketViewItems = (title, backAction) => `
-	<div class="row justify-between">
-		<button class="internet-nav" data-action="${backAction}">↩</button>
-		<h1>${title}</h1>
-		<div></div>
-	</div>
-
-	<div id="property-list" class="collumn">
-		<div class="clean-row align-end gap-1 padding-bottom">
+	<div class="collumn justify-between margin" style="position:sticky;top:0px;background-color:white;width:100%;">
+		<div class="row justify-between padding">
+			<button class="internet-nav" data-action="${backAction}">↩</button>
 			<select name="price" id="price">
-			   <option selected disabled hidden>${sortMethod}</option>
+				<option selected disabled hidden>${sortMethod}</option>
 				<option value="low">Price (lowest first)</option>
 				<option value="high">Price (highest first)</option>
 			</select>
 		</div>
-		${items}
+		<h1 class="no-padding-top">${title}</h1>
 	</div>
 
-	
-
+	<div id="property-list" class="collumn">
+		${items}
+	</div>
+		
 	<div class="row">
 		<button class="pagination-nav" data-direction="prev">Prev</button>
 		<button class="pagination-nav" data-direction="next">Next</button>
 	</div>
+		
+	<div class="row padding justify-right" style="position:sticky;bottom:0%;">
+		<div class="collumn">
+		<button class="go-up">▲</button>
+		<button class="go-bottom">▼</button>
+		</div>
+	</div>
 `;
 
 export function updateMarketPage(direction) {
-	console.log(direction)
+	console.log(direction);
 	const maxItems = sortedProperties.length;
 
 	if (direction === "next" && startItem + itemPerPage < maxItems) {
@@ -143,12 +146,11 @@ export function updateMarketPage(direction) {
 	}
 	console.log("klsjgølsjrg");
 	getItems();
-	
 }
 
 export const internetViews = {
 	market: () => `
-		<div class="row justify-between">
+		<div class="row justify-between padding" style="position:sticky;top:0px;background-color:white;width:100%;">
 			<button class="go-back" data-action="internet/internet">↩</button>
 			<h1>Online Market</h1>
 			<div></div>

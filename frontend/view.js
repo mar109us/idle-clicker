@@ -29,7 +29,10 @@ export const ui = {
  * Assigns values to DOM elements with data from player stats
  */
 export function updateUI() {
-	ui.right.playerId.innerText = "Player: " + state.player.username;
+	ui.right.playerId.innerHTML = `
+	<h2 class="no-pbm" style="pointer-events: none;user-select: none;">${state.player.username}</h2>
+	<img src="src/images/profile/default.png" style="pointer-events: none;user-select: none;" width="80%">`;
+
 	ui.right.playerHealth.innerText = "Health: ";
 	ui.right.playerMentalHealth.innerText = "Mental health: ";
 

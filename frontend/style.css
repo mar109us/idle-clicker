@@ -43,16 +43,24 @@ button {
 }
 
 #middle {
-	padding: 2em;
-	padding-top: 1em;
+	/* padding: 2em;
+	padding-top: 1em; */
 
-	width: 100%;
 	overflow-y: scroll;
 	height: 100%;
 
 	button {
 		width: fit-content;
 	}
+}
+
+.margin-top {
+	margin: 2em;
+	margin-top: 1em;
+}
+
+.margin-mini {
+	margin: 1em;
 }
 
 .right {
@@ -75,6 +83,13 @@ button {
 
 		width: 80%;
 	}
+}
+
+.right-div {
+	padding: 0.5em;
+	border: 2px solid black;
+	margin: 0px;
+	width: 80%;
 }
 
 .full-width {
@@ -143,6 +158,10 @@ h4 {
 
 .border {
 	border: 1px solid lightgray;
+}
+
+.border-2 {
+	border: 2px solid black;
 }
 
 .rounded {
@@ -228,6 +247,12 @@ p {
 .justify-left {
 	justify-content: left;
 	text-align: left;
+	text-justify: left;
+}
+
+.text-left {
+	text-align: left;
+	text-justify: left;
 }
 
 .justify-right {
@@ -256,6 +281,10 @@ p {
 
 .padding-bottom {
 	padding-bottom: 1em;
+}
+
+.no-padding-top {
+	padding-top: 0em;
 }
 
 .margin-1 {
@@ -290,4 +319,8 @@ p {
 
 .weight-600 {
 	font-weight: 600;
+}
+
+.pos-left {
+	align-self: flex-start;
 }

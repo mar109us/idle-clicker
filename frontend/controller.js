@@ -15,6 +15,7 @@ import {
 	updateMarketPage,
 	sortItems,
 } from "./content/left-menu/internet/market/market.js";
+import { profileView } from "/frontend/content/right-menu/profile.js";
 
 const TEST_PLAYER = 1;
 
@@ -24,12 +25,15 @@ export async function initializeApp() {
 	await sortItems();
 	await getItems();
 
-	await showMainContent("internet/internet");
+	/* await showMainContent("internet/internet");
 	const outputDiv = document.getElementById("internet-output");
 	if (outputDiv && internetViews.marketPropertyBuyLand) {
-		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
+		outputDiv.innerHTML = internetViews.marketPropertyBuyLand(); */
+		
 		/* outputDiv.innerHTML = internetViews.item(8); */
-	}
+	/* } */
+
+	/* ui.middle.innerHTML = profileView.profile; */
 }
 initializeApp();
 
@@ -81,6 +85,15 @@ ui.left.internet.addEventListener("click", () =>
 );
 
 /**
+ * Handles buttons in right section
+ */
+addEventListener("click", async function (event) {
+	if (event.target.classList.contains("player-profile")) {
+		ui.middle.innerHTML = profileView.profile;
+	}
+});
+
+/**
  * Handles buttons that do page return navigation to root pages in middle section
  */
 ui.middle.addEventListener("click", function (event) {
@@ -127,12 +140,23 @@ ui.middle.addEventListener("click", async function (event) {
 	}
 
 	if (event.target.classList.contains("pagination-nav")) {
-		ui.middle.scrollTo({ top: 0, behavior: 'smooth' });
+		ui.middle.scrollTo({ top: 0, behavior: "smooth" });
 		const direction = event.target.dataset.direction;
 		updateMarketPage(direction);
 		const outputDiv = document.getElementById("internet-output");
 		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
-		
+	}
+
+	const scrollDown = event.target.closest(".go-bottom");
+	if (scrollDown) {
+		console.log("aasd");
+		ui.middle.scrollTo({ top: 100000000, behavior: "smooth" });
+	}
+
+	const scrollUp = event.target.closest(".go-up");
+	if (scrollUp) {
+		console.log("aasd");
+		ui.middle.scrollTo({ top: 0, behavior: "smooth" });
 	}
 
 	const buyButton = event.target.closest(".buy-property");
@@ -210,8 +234,7 @@ ui.middle.addEventListener("submit", function (event) {
  * Handles selection in middle section
  */
 ui.middle.addEventListener("change", function (event) {
-
-	console.log(event.target.value)
+	console.log(event.target.value);
 	if (event.target.value === "low") {
 		console.log("low");
 		sortItems("low");
@@ -224,5 +247,5 @@ ui.middle.addEventListener("change", function (event) {
 		const outputDiv = document.getElementById("internet-output");
 		outputDiv.innerHTML = internetViews.marketPropertyBuyLand();
 	}
-	
+	ui.middle.scrollTo({ top: 0, behavior: "smooth" });
 });
