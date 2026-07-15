@@ -15,7 +15,10 @@ import {
 	updateMarketPage,
 	sortItems,
 } from "./content/left-menu/internet/market/market.js";
-import { profileView } from "/frontend/content/right-menu/profile.js";
+import {
+	profileView,
+	getProfileProperties,
+} from "/frontend/content/right-menu/profile.js";
 
 const TEST_PLAYER = 1;
 
@@ -29,11 +32,11 @@ export async function initializeApp() {
 	const outputDiv = document.getElementById("internet-output");
 	if (outputDiv && internetViews.marketPropertyBuyLand) {
 		outputDiv.innerHTML = internetViews.marketPropertyBuyLand(); */
-		
-		/* outputDiv.innerHTML = internetViews.item(8); */
+
+	/* outputDiv.innerHTML = internetViews.item(8); */
 	/* } */
 
-	/* ui.middle.innerHTML = profileView.profile; */
+	document.getElementById("player-id").click();
 }
 initializeApp();
 
@@ -87,9 +90,10 @@ ui.left.internet.addEventListener("click", () =>
 /**
  * Handles buttons in right section
  */
-addEventListener("click", async function (event) {
+addEventListener("click", function (event) {
 	if (event.target.classList.contains("player-profile")) {
-		ui.middle.innerHTML = profileView.profile;
+		getProfileProperties();
+		ui.middle.innerHTML = profileView.profile();
 	}
 });
 
