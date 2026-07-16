@@ -2,78 +2,206 @@ import { state } from "../../model.js";
 import { updateUI } from "../../view.js";
 
 let profileProperties = "";
+let age;
+let ageCalc;
+const today = new Date().getTime();
 
 export function getProfileProperties() {
 	profileProperties = "";
 	Object.values(state.ownedProperties).forEach((row) => {
 		Object.entries(row).forEach(([key, value]) => {
 			if (key === "property_id") {
-				profileProperties += `<li>Norklickway ${value}, Klikkertown</li>`;
+				profileProperties += `
+				<div class="clean-collumn width-50">
+				<div>Norklickway ${value}, Klikkertown</div>
+				
+				`;
+			}
+			if (key === "image") {
+				profileProperties += `
+				<img class="width-50" src="./src/images/property/land/aerial/${value}.png"></div>
+				`;
 			}
 		});
 	});
+	age = state.player.created_at;
+	age = (today - age) / (1000 * 86400 * 365);
+	ageCalc = Math.round(age);
 }
 
 export const profileView = {
 	profile: () => /* HTML */ `
-		<div class="clean-collumn justify-center full-width align-center gap-1">
-			<h2>${state.player.username}</h2>
-			<img
-				src="src/images/profile/default.png"
-				class="border-2"
-				style="pointer-events: none;user-select: none;"
-				width="30%"
-			/>
+		<div class="collumn justify-center padding">
+			<div class="clean-row padding width-minmax-80">
+				<img
+					src="src/images/profile/default.png"
+					style="pointer-events: none;user-select: none;"
+					width="50%"
+				/>
 
-			<div
-				class="clean-collumn border-2 justify-center align-center width-80"
-			>
-				<div class="clean-row justify-evenly border-2 full-width padding-1">
-					<ul>
-						<li>Age</li>
-						<li>Birthday</li>
-						<li>Player id</li>
-					</ul>
-					<ul>
-						<li>Money</li>
-						<li>Value</li>
-					</ul>
+				<div class="clean-collumn width-50">
+					<div
+						class="clean-row align-center justify-center height-100 row-lightgray"
+					>
+						<h2 class="no-pbm">${state.player.username}</h2>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Age</div>
+						<div>${ageCalc}</div>
+					</div>
+
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Birthday</div>
+						<div>${state.player.created_at_date}</div>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Player id</div>
+						<div>${state.player.player_id}</div>
+					</div>
+
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Money</div>
+						<div>
+							$${state.character.money
+								.toString()
+								.replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+						</div>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Value</div>
+						<div>none</div>
+					</div>
 				</div>
+			</div>
 
-				<div class="clean-row justify-evenly border-2 full-width padding-1">
-					<ul>
-						<li>Strength</li>
-						<li>Agility</li>
-						<li>Toughness</li>
-						<li>Endurance</li>
-						<li>Recovery</li>
-						<li>Immune system</li>
-					</ul>
+			<div class="clean-row padding width-minmax-80 justify-between">
+				<div class="clean-collumn width-30">
+					<div
+						class="clean-row align-center justify-center height-100 row-lightgray"
+					>
+						<h2>Mind</h2>
+					</div>
 
-					<ul>
-						<li>Analyze</li>
-						<li>Focus</li>
-						<li>Will</li>
-						<li>Intuition</li>
-						<li>Patience</li>
-						<li>Memory</li>
-						<li>Social</li>
-						<li>Awareness</li>
-					</ul>
+					<div class="clean-row row-gray padding justify-between">
+						<div>Analyze</div>
+						<div>${null}</div>
+					</div>
 
-					<ul>
-						<li>Creativity</li>
-						<li>Problem solving</li>
-						<li>Intelligence</li>
-						<li>Finesse</li>
-						<li>Precision</li>
-					</ul>
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Focus</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Will</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Intuition</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Patience</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Memory</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Social</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Awareness</div>
+						<div>${null}</div>
+					</div>
 				</div>
-				<div class="clean-row justify-evenly border-2 full-width padding-1">
-					<ul>
-						${profileProperties}
-					</ul>
+				<div class="clean-collumn width-30">
+					<div class="clean-row align-center justify-center row-lightgray">
+						<h2>Body</h2>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Strength</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Agility</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Toughness</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Endurance</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Recovery</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Immune system</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row padding justify-between">
+						<br />
+					</div>
+
+					<div class="clean-row padding justify-between">
+						<br />
+					</div>
 				</div>
+				<div class="clean-collumn width-30">
+					<div class="clean-row align-center justify-center row-lightgray">
+						<h2>Misc</h2>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Creativity</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Problem solving</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Intelligence</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-lightgray padding justify-between">
+						<div>Finesse</div>
+						<div>${null}</div>
+					</div>
+
+					<div class="clean-row row-gray padding justify-between">
+						<div>Precision</div>
+						<div>${null}</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="clean-row justify-between padding width-80 wrap">
+				${profileProperties}
 			</div>
 		</div>
 	`,
